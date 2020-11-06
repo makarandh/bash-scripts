@@ -1,0 +1,97 @@
+#!/bin/bash
+
+echo ""
+echo "Running apt-do-yo-thing"
+/usr/local/sbin/apt-do-yo-thing
+
+echo ""
+echo "Closing IDEs..."
+wmctrl -c py  2>/dev/null &
+wmctrl -c js  2>/dev/null &
+wmctrl -c code  2>/dev/null &
+wmctrl -c java 2>/dev/null &
+wmctrl -c json  2>/dev/null &
+wmctrl -c html  2>/dev/null &
+wmctrl -c css  2>/dev/null &
+wmctrl -c xml  2>/dev/null &
+sleep 2
+
+echo "Closing applications..."
+wmctrl -c brave 2>/dev/null &
+wmctrl -c firefox 2>/dev/null &
+wmctrl -c tor 2>/dev/null &
+wmctrl -c bit 2>/dev/null &
+wmctrl -c vlc 2>/dev/null &
+wmctrl -c waterfox  2>/dev/null &
+wmctrl -c signal  2>/dev/null &
+wmctrl -c standard  2>/dev/null &
+sleep 2
+
+echo "Killing java..."
+killall java 2>/dev/null
+sleep 2
+
+dc=$( ps -ef | grep -i "dolphin" | wc -l )
+while [ ${dc} -gt 0 ] 
+do 
+	echo "Closing dolphin window #${dc}"
+	wmctrl -c dolphin &
+	sleep 1
+	dc=$(( ${dc} - 1 )) 
+done
+
+echo "Closing remaining open windows..."
+wmctrl -l | tr -s " " |  cut -d" " -f 4 | grep -iv "desktop" | grep -iv "plasma" | grep -iv "mak" | grep -iv "root" |  xargs -i wmctrl -c {} &
+sleep 2
+
+echo "Closing qbittorrent"
+killall -15 qbittorrent 2> /dev/null  &
+sleep 2
+
+echo "Closing other terminals..."
+term=$(tty | cut -d/ -f3,4)
+ps -e | grep pts | grep -v ${term} | grep bash | tr -d " " | cut -d p -f 1 | xargs -i kill {}
+sleep 1
+
+echo "Unmounting Veracrypt drives..."
+sudo veracrypt -d&
+sleep 3
+
+UP_TO_DATE="Up to date"
+NOT_RUNNING="Dropbox isn't running!"
+
+if [[ $(id -u) = 1000 ]] 
+then 
+
+    while [ "$(dropbox status)" != "${UP_TO_DATE}" ]
+    do
+        dropbox status
+        if [ "${NOT_RUNNING}" = "$(dropbox status)" ]
+        then
+            dropbox start 2>/dev/null
+            echo "Starting Dropbox... "
+        else
+            echo "Dropbox is syncing. Will try again after a minute.."
+        fi
+        sleep 60
+    done
+
+else
+
+    while [ "$(sudo -u mak -i dropbox status)" != "${UP_TO_DATE}" ]
+    do
+        sudo -u mak -i dropbox status
+        if [ "${NOT_RUNNING}" = "$(sudo -u mak -i dropbox status)" ]
+        then
+            sudo -u mak -i dropbox start 2>/dev/null
+            echo "Starting Dropbox... "
+        else
+            echo "Dropbox is syncing. Will try again after a minute.."
+        fi
+        sleep 60
+    done
+fi
+
+echo "Dropbox finished syncing. Powering down..."
+
+/usr/local/sbin/poweroff

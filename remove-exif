@@ -1,0 +1,127 @@
+#!/bin/bash
+
+
+    # This program is free software: you can redistribute it and/or modify
+    # it under the terms of the GNU General Public License as published by
+    # the Free Software Foundation, either version 3 of the License, or
+    # (at your option) any later version.
+
+    # This program is distributed in the hope that it will be useful,
+    # but WITHOUT ANY WARRANTY; without even the implied warranty of
+    # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    # GNU General Public License for more details.
+
+    # You should have received a copy of the GNU General Public License
+    # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
+
+export_filenames()
+{
+	# This is the main temp file that keeps track of the other temp files creaed in this session of the script
+	export mainfilename="$(pwd)/.this.is.a.temp.file.created.by.remove-exif.script.$(date +%F.%T)"
+	
+	# A temp file of this name is created inside every folder the script descends into
+	export filename=".this.is.a.temp.file.created.by.remove-exif.script"
+}
+
+
+delete_old_temp_files()
+{
+	find . -type f -name "*${filename}*" | xargs -i rm -f {}
+}
+
+
+cleanup()
+{
+	echo -n "Cleaning up... "
+	if [ -f "${mainfilename}" ]
+	then
+		cat "${mainfilename}" | xargs -i rm -f {}
+		rm -f "${mainfilename}"
+	fi
+	echo -e "Done.\n"
+}
+
+
+graceful_exit()
+{
+	echo "Interrupted ..."
+	cleanup
+	echo -e "Exiting\n"
+	exit 1
+}
+
+
+remove_exif()
+{
+	for pic in *
+	do
+		# If it's a directory, go inside it and process it
+		if [ -d "${pic}" ]
+		then
+			dir="${pic}"
+			echo -e "\nDescending to directory $(pwd)/${dir}...\n"
+			cd "${pic}"
+
+			# If the dir is marked (i.e. the temp file already exists), it means it's already being processed.
+		        # No need to process it again.
+			if [ -f "${filename}" ]
+			then
+				echo -e "Whoa! Deja vu.\n"
+			else
+				# Good. The dir hasn't been processed yet. 
+				# So let's mark it with a temp file and add its location to master file
+				# Then we need to start processing it
+				touch "${filename}"
+				echo "$(pwd)/${filename}" >> ${mainfilename}
+				remove_exif
+				echo -e "\nDone with directory $(pwd).\n"
+			fi
+			cd ..
+		else
+			# Right now it only processes jpegs. 
+			if [[ "${pic}" =~ [jJ][pP].*[gG]$ ]]
+			then
+				echo -n "Removing exif from $(pwd)/${pic} " 
+				# First check if exif info exists
+				info="$( identify -verbose "$pic" | grep "exif" | wc -l )"
+				if [ "$info" -eq "0" ]
+				then
+					echo " -- No exif found; skipping..."
+				else
+					# removing exif info
+					echo "[${info}]"
+					mogrify -strip "$pic"
+				fi
+			else
+				echo "$(pwd)/${pic} is not a jpg; skipping..."
+			fi
+		fi
+	done
+}
+
+
+main()
+{
+	# Setting file names of temporary files
+	export_filenames
+	
+	# In case there were temp files left over by older sessions, deleting them
+	delete_old_temp_files
+	
+	# Need to clean up in case the script gets interrupted 
+	trap graceful_exit 1 2 3 6 15
+	
+	# The main stuff
+	remove_exif
+	
+	# Cleaning up before bye bye
+	cleanup
+}
+
+
+
+main
+
+

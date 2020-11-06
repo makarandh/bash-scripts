@@ -1,0 +1,225 @@
+#!/bin/bash
+
+# WARNING: Do not use this script if you have files/dirs with names with spaces
+
+if [ ${#} -eq 0 ]
+then
+	echo -e "\nPlease provide dir to clean.\n"
+	exit
+fi
+
+if [ ! -d "${1}" ]
+then
+	echo -e "\n${1} is not a directory.\n"
+	exit
+fi
+
+ORIGINAL_DIR=${PWD}
+cd "${1}"
+echo -e "\n${PWD}"
+
+tempfile="clean-projects.tmp"
+
+echo -e "\n======================================================="
+echo "Cleaning Python projects"
+echo -e "======================================================="
+
+results=($(find . -type f -name "*pyc"))
+skip_next=false
+for file in "${results[@]}"
+do
+	if [ "${skip_next}" = "true" ]
+	then
+		if [ $(echo ${file} | grep -e "pyc$" | wc -l) -eq 1 ]
+		then
+			skip_next=false
+		fi
+		echo -e "Skipping ${file}"
+		continue
+	fi
+	if [ "${file}" = " " ]
+	then
+		continue
+	fi
+	if [ $(echo ${file} | grep -e "pyc$" | wc -l) -eq 1 ]
+	then
+		echo -e Deleting ${file}
+		rm -f ${file}
+	else
+		skip_next=true
+		echo -e "Not a pyc file: ${file}. Skipping."
+	fi
+done
+echo "Done"
+echo "-------------------------------------------------------"
+
+echo -e "\n======================================================="
+echo "Cleaning Gradle projects"
+echo -e "======================================================="
+
+results=($(find . -type f -name "*gradlew"))
+skip_next=false
+cwd=$(pwd)
+echo "Current Directory: ${cwd}"
+for file in "${results[@]}"
+do
+	if [ "${skip_next}" = "true" ]
+	then
+		if [ $(echo ${file} | grep -e "gradlew$" | wc -l) -eq 1 ]
+		then
+			skip_next=false
+		fi
+		echo -e "Skipping ${file}"
+		continue
+	fi
+	if [ "${file}" = " " ]
+	then
+		continue
+	fi
+	if [ $(echo ${file} | grep -e "gradlew$" | wc -l) -eq 1 ]
+	then
+		echo -e "\nGradle file found ${file}"
+		proj_dir="$(echo ${file} | sed 's/\/gradlew$//')"
+		echo "Descending into ${proj_dir}"
+		cd ${proj_dir}
+		./gradlew clean
+		cd ${cwd}
+		echo 
+	else
+		skip_next=true
+		echo -e "Not a gradlew file: ${file}. Skipping."
+	fi
+done
+kill -15 $( ps -ef | grep -i "java" | grep -i "gradle" | tr -s " " | cut -d " " -f 2 ) 2> /dev/null
+echo "Done"
+echo "-------------------------------------------------------"
+
+
+echo -e "\n======================================================="
+echo "Cleaning Java projects"
+echo -e "======================================================="
+
+results=($(find . -type f -name "*class"))
+skip_next=false
+for file in "${results[@]}"
+do
+	if [ "${skip_next}" = "true" ]
+	then
+		if [ $(echo ${file} | grep -e "class$" | wc -l) -eq 1 ]
+		then
+			skip_next=false
+		fi
+		echo -e "Skipping ${file}"
+		continue
+	fi
+	if [ "${file}" = " " ]
+	then
+		continue
+	fi
+	if [ $(echo ${file} | grep -e "class$" | wc -l) -eq 1 ]
+	then
+		echo -e "Deleting ${file}"
+		rm -f ${file}
+	else
+		skip_next=true
+		echo -e "Not a class file: ${file}. Skipping."
+	fi
+done
+
+echo -e "\nCleaning Java artifects"
+echo -e "-------------------------------------------------------\n"
+results=($(find . -type f -iname "*jar" | grep 'out/artifacts'))
+skip_next=false
+for file in "${results[@]}"
+do
+	if [ "${skip_next}" = "true" ]
+	then
+		if [ $(echo ${file} | grep -e "jar$" | wc -l) -eq 1 ]
+		then
+			skip_next=false
+		fi
+		echo -e "Skipping ${file}"
+		continue
+	fi
+	if [ "${file}" = " " ]
+	then
+		continue
+	fi
+	if [ $(echo ${file} | grep -e "jar$" | wc -l) -eq 1 ]
+	then
+		echo -e "Deleting ${file}"
+		rm -f ${file}
+	else
+		skip_next=true
+		echo -e "Not a jar file: ${file}. Skipping."
+	fi
+done
+echo "Done"
+echo "-------------------------------------------------------"
+
+
+echo -e "\n======================================================="
+echo "Cleaning node_modules"
+echo -e "======================================================="
+
+results=($(find . -type d -name "node_modules"))
+skip_next=false
+for dir in "${results[@]}"
+do
+	if [ "${skip_next}" = "true" ]
+	then
+		echo -e "Skipping ${dir}"
+		if [ $(echo ${dir} | grep -e "node_modules$" | wc -l) -eq 1 ]
+		then
+			skip_next=false
+		fi
+
+echo -e "\n======================================================="
+echo "Cleaning node_modules"
+echo -e "======================================================="
+
+		continue
+	fi
+	if [ "${dir}" = " " ]
+	then
+		continue
+	fi
+	if [ $(echo ${dir} | grep -e "node_modules$" | wc -l) -eq 1 ]
+	then
+		echo -e "Deleting ${dir}"
+		rm -rf "${dir}"
+	else
+		skip_next=true
+		echo -e "Not a node module dir: ${dir}. Skipping."
+	fi
+done
+echo "Done"
+echo "-------------------------------------------------------"
+
+
+echo -e "\n======================================================="
+echo "Cleaning php composer vendor files"
+echo -e "======================================================="
+
+results=($(find . -type d -name "vendor"))
+for dir in "${results[@]}"
+do
+	if [ "${dir}" = " " ]
+	then
+		continue
+	fi
+	if [ $(echo ${dir} | grep -e "vendor" | wc -l) -eq 1 ]
+	then
+        if [ $(find ${dir} -maxdepth 1 -type d -name "composer" | wc -l) -ge 1 ]
+        then
+            echo -e "Deleting ${dir}"
+            rm -rf "${dir}"
+        fi
+	fi
+done
+echo "Done"
+echo "-------------------------------------------------------"
+
+cd "${ORIGINAL_DIR}"
+echo -e "\n${PWD}\n"
+

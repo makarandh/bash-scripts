@@ -1,0 +1,28 @@
+#!/bin/bash
+
+update_env() {
+	echo -e "\n-------------------------------------------------------------"
+	echo " Updating ${1}..."
+	echo -e "-------------------------------------------------------------\n"
+	conda activate ${1}
+	conda update --all -y
+	conda deactivate 
+	echo -e "\nDone"
+	echo -e "-------------------------------------------------------------\n"
+}
+
+
+total_packages=$(conda env list | wc -l)
+total_packages=$(( ${total_packages} - 3 ))
+envs=( $(conda env list | tail -${total_packages} | head -$(( ${total_packages} - 1 )) | cut -d " " -f 1) ) 
+for env in "${envs[@]}"
+do
+	update_env ${env}
+done
+
+echo -e "\n-------------------------------------------------------------"
+echo " Cleaning..."
+echo -e "-------------------------------------------------------------\n"
+conda clean -a -y
+echo -e "\nDone"
+echo -e "-------------------------------------------------------------\n"

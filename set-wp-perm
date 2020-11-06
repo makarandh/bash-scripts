@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ "$1" == "-v" ]
+then
+
+	chown -R -c www-data:mak  /var/www/html
+	chmod -R -c ug+rw  /var/www/html
+	find /var/www/html -type d | xargs -i chmod -c ug+x  {}
+else
+	chown -R www-data:mak  /var/www/html
+	chmod -R ug+rw  /var/www/html
+	find /var/www/html -type d | xargs -i chmod ug+x  {}
+fi

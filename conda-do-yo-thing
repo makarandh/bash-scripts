@@ -1,0 +1,52 @@
+#!/bin/bash
+
+
+    # This program is free software: you can redistribute it and/or modify
+    # it under the terms of the GNU General Public License as published by
+    # the Free Software Foundation, either version 3 of the License, or
+    # (at your option) any later version.
+
+    # This program is distributed in the hope that it will be useful,
+    # but WITHOUT ANY WARRANTY; without even the implied warranty of
+    # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    # GNU General Public License for more details.
+
+    # You should have received a copy of the GNU General Public License
+    # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+echo -e "\n----------------------------------------------------------------------------"
+echo -e " Updating Conda"
+echo -e "----------------------------------------------------------------------------\n"
+conda update conda -y 
+let CONDA_EXIT_CODE="$?"
+
+#echo -e "\nCleaning..."
+#conda clean -a -y 
+
+echo -e "\n----------------------------------------------------------------------------"
+echo -e " Updating Anaconda"
+echo -e "----------------------------------------------------------------------------\n"
+conda update anaconda -y 
+let ANACONDA_EXIT_CODE="$?"
+
+#echo -e "\nCleaning..."
+#conda clean -a -y 
+
+echo -e "\n----------------------------------------------------------------------------"
+echo -e " Updating All Conda Packages"
+echo -e "----------------------------------------------------------------------------\n"
+conda update --all -y
+let ALL_EXIT_CODE="$?"
+
+#echo -e "\n----------------------------------------------------------------------------"
+#echo -e " Cleaning..."
+#echo -e "----------------------------------------------------------------------------\n"
+#conda clean -a -y 
+
+echo -e "\n----------------------------------------------------------------------------"
+echo -e " Operations completed with the following exit codes:"
+echo -e "----------------------------------------------------------------------------\n"
+echo "CONDA   : ${CONDA_EXIT_CODE}"
+echo "ANACONDA: ${ANACONDA_EXIT_CODE}"
+echo "ALL     : ${ALL_EXIT_CODE}"
+echo ""

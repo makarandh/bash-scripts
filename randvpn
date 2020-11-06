@@ -1,0 +1,15 @@
+#!/bin/bash
+
+python << EOPF
+import sys
+
+print()
+print("Python {}".format(sys.version))
+
+import random
+
+print()
+print("1 - 105:", random.randint(1, 105))
+print()
+
+EOPF

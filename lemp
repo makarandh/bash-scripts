@@ -1,0 +1,82 @@
+#!/bin/bash
+
+action="$1"
+
+case ${action} in
+	"enable")
+		echo -e "Enabling php fpm... "
+		systemctl enable php7.4-fpm
+		echo -e "done"
+		echo -e "Enabling mariadb... "
+		systemctl enable mariadb
+		echo -e "done"
+		echo -e  "Enabling nginx... "
+		systemctl enable nginx
+		echo -e "done"
+		;;
+	"disable")
+		echo -e "Disabling php fpm... "
+		systemctl disable php7.4-fpm
+		echo -e "done"
+		echo -e "Disabling mariadb... "
+		systemctl disable mariadb
+		echo -e "done"
+		echo -e "Disabling nginx... "
+		systemctl disable nginx
+		echo -e "done"
+		;;
+	"start")
+		echo -e -n "Starting php fpm... "
+		systemctl start php7.4-fpm
+		echo -e "done"
+		echo -e -n "Starting mariadb... "
+		systemctl start mariadb
+		echo -e "done"
+		echo -e -n "Starting nginx... "
+		systemctl start nginx
+		echo -e "done"
+		;;
+	"stop")
+		echo -e -n "Stopping php fpm... "
+		systemctl stop php7.4-fpm
+		echo -e "done"
+		echo -e -n "Stopping mariadb... "
+		systemctl stop mariadb
+		echo -e "done"
+		echo -e -n "Stopping nginx... "
+		systemctl stop nginx
+		echo -e "done"
+		;;
+	"restart")
+		echo -e -n "Stopping php fpm... "
+		systemctl stop php7.4-fpm
+		echo -e "done"
+		echo -e -n "Stopping mariadb... "
+		systemctl stop mariadb
+		echo -e "done"
+		echo -e -n "Stopping nginx... "
+		systemctl stop nginx
+		echo -e "done"
+		echo -e -n "Starting php fpm... "
+		systemctl start php7.4-fpm
+		echo -e "done"
+		echo -e -n "Starting mariadb... "
+		systemctl start mariadb
+		echo -e "done"
+		echo -e -n "Starting nginx... "
+		systemctl start nginx
+		echo -e "done"
+		;;
+	"status")
+		systemctl status php7.4-fpm mariadb nginx 
+		;;
+	*)
+		echo -e "Usage: ${0} {COMMAND}\n"
+		echo "Commands:"
+		echo -e "  start    Start lemp stack"
+		echo -e "  stop     Stop lemp stack"
+		echo -e "  restart  Restart lemp stack"
+		echo -e "  status   Display status of lemp stack"
+esac
+
+#systemctl start mariadb.service 

@@ -1,0 +1,118 @@
+#!/bin/bash
+
+
+    # This program is free software: you can redistribute it and/or modify
+    # it under the terms of the GNU General Public License as published by
+    # the Free Software Foundation, either version 3 of the License, or
+    # (at your option) any later version.
+
+    # This program is distributed in the hope that it will be useful,
+    # but WITHOUT ANY WARRANTY; without even the implied warranty of
+    # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    # GNU General Public License for more details.
+
+    # You should have received a copy of the GNU General Public License
+    # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
+# convertallmov2avi: Converts all mov files to avi
+# The list of directories can be specified in the command line
+
+verbose=0
+
+test_ffmpeg()
+{
+	if [ ! ffmpeg --help > /dev/null 2>&1 ] 
+	then 
+		echo -e "\nffmpeg not found. Please install it before running. Quitting...\n" 
+		return 1
+	fi
+	return 0
+}
+
+
+init_mesg()
+{
+	echo -e "\nThe Program you are running is $2"
+	echo -e "Total number of arguments = $1\n"
+}
+
+
+convert_file()
+{
+	file="$1"
+	echo "Converting file: $file... "
+	dest="${file%mov}avi"
+	if [ "$verbose" -eq "0" ]
+	then
+		:
+		ffmpeg -i "$file" -vcodec copy -acodec copy "$dest" -loglevel quiet > /dev/null 
+	else
+		:
+		ffmpeg -i "$file" -vcodec copy -acodec copy "$dest"
+	fi	
+	echo "Ouput file: $dest"
+}
+
+
+convert_files()
+{
+
+	if [ "$*" = "" ]
+	then
+		echo -e "\nNo directories provided. Working on files in the current directory..."
+		for file in *.mov
+		do
+			if [ -f "$file" ]
+			then
+				convert_file "$file"
+			fi
+		done
+
+	else
+		for arg in "$@"
+		do
+			if [ "$arg" = "-v" ]
+			then
+				continue
+			elif [ ! -d "$arg" ]
+			then
+				echo "$arg - not a directory."
+				continue
+			fi
+
+			echo -e "\nProcessing dir: $arg"
+			for file in "$arg"/*.mov
+			do
+				if [ -f "$file" ]
+				then
+					convert_file "$file"
+				fi
+			done	
+			echo ""
+		done
+	fi
+	echo ""
+}
+
+
+################################################################################
+# Main 
+################################################################################
+
+
+test_ffmpeg
+if [ $? = "0" ]
+then
+	if [ "$1" = "-v" ]
+	then
+		verbose=1
+		init_mesg $# $0
+	fi
+
+	convert_files "$@"
+	echo "Done"
+fi
+echo ""
+
+

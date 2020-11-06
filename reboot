@@ -1,0 +1,83 @@
+#!/bin/bash
+
+echo ""
+echo "Closing IDEs..."
+wmctrl -c py 2>/dev/null &
+wmctrl -c php 2>/dev/null &
+wmctrl -c js 2>/dev/null &
+wmctrl -c code 2>/dev/null &
+wmctrl -c java2>/dev/null &
+wmctrl -c json 2>/dev/null &
+wmctrl -c html 2>/dev/null &
+wmctrl -c css 2>/dev/null &
+wmctrl -c xml 2>/dev/null &
+sleep 4
+
+echo "Closing browsers and other applications..."
+wmctrl -c brave 2>/dev/null &
+wmctrl -c firefox 2>/dev/null &
+wmctrl -c tor 2>/dev/null &
+wmctrl -c bit 2>/dev/null &
+wmctrl -c vlc 2>/dev/null &
+wmctrl -c waterfox  2>/dev/null &
+wmctrl -c signal  2>/dev/null &
+wmctrl -c standard  2>/dev/null &
+sleep 2
+
+echo "Killing java..."
+killall java 2>/dev/null
+sleep 2
+
+dc=$( ps -ef | grep -i "dolphin$" | wc -l )
+while [ ${dc} -gt 0 ] 
+do 
+	echo "Closing dolphin window #${dc}"
+	wmctrl -c dolphin &
+	sleep 1
+	dc=$(( ${dc} - 1 )) 
+done
+
+echo "Closing any remaining open windows..."
+wmctrl -l | tr -s " " |  cut -d" " -f 4 | grep -iv "desktop" | grep -iv "plasma" | grep -iv "mak" | grep -iv "root" |  xargs -i wmctrl -c {} &
+sleep 2
+
+echo "Closing qbittorrent and vlc..."
+killall -15 qbittorrent&
+wmctrl -c vlc&
+sleep 2
+
+echo "Closing open terminals..."
+x=$(tty | cut -d/ -f 4)
+ps -ef | grep pts | grep '/bin/bash' | tr -s ' ' |  grep -v "pts/${x}" | cut -d " " -f 2 | xargs -i kill -15 {}
+sleep 1
+
+echo "Unmounting Veracrypt drives..."
+veracrypt -d&
+sleep 2
+
+echo "Unmounting external drives..."
+umount /media/ext4TB 2>/dev/null
+umount /media/portable2 2>/dev/null
+umount /media/portable1 2>/dev/null
+sleep 1
+
+echo "Stopping wpa_supplicant..."
+service wpa_supplicant stop
+sleep 1
+
+echo "Stopping network-manager..."
+service network-manager stop
+sleep 1
+
+echo "Stoping expressvpn..."
+service expressvpn stop
+sleep 1
+
+echo "Stoping packagekit..."
+service packagekit stop
+sleep 1
+
+echo "Rebooting..."
+
+/sbin/reboot
+

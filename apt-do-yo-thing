@@ -1,0 +1,191 @@
+#!/bin/bash
+
+    # This program is free software: you can redistribute it and/or modify # it under the terms of the GNU General Public License as published by
+    # the Free Software Foundation, either version 3 of the License, or
+    # (at your option) any later version.
+
+    # This program is distributed in the hope that it will be useful,
+    # but WITHOUT ANY WARRANTY; without even the implied warranty of
+    # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    # GNU General Public License for more details.
+
+    # You should have received a copy of the GNU General Public License
+    # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
+################################################################
+######################   APT UPDATE ############################
+################################################################
+
+echo -e "\n===================================================================="
+echo -e " Updating Apt Packages"
+echo -e "====================================================================\n"
+
+echo -e "\nRunning apt update..."
+echo -e "--------------------------------------------------------------------\n"
+sudo apt update -y 
+let UPDATE_EXIT_CODE="$?"
+
+echo -e "\nRunning dpkg configure..."
+echo -e "--------------------------------------------------------------------\n"
+sudo dpkg --configure -a
+
+echo -e "\nRunning apt install -f..."
+echo -e "--------------------------------------------------------------------\n"
+sudo apt install -f -y
+
+echo -e "\nRunning apt autoremove..."
+echo -e "--------------------------------------------------------------------\n"
+sudo apt autoremove -y 
+
+echo -e "\nRunning apt full-upgrade..."
+echo -e "--------------------------------------------------------------------\n"
+sudo apt full-upgrade -y 
+let UPGRADE_EXIT_CODE="$?"
+
+echo -e "\nRunning apt install -f..."
+echo -e "--------------------------------------------------------------------\n"
+sudo apt install -f -y
+
+echo -e "\nRunning apt autoremove..."
+echo -e "--------------------------------------------------------------------\n"
+sudo apt autoremove -y 
+
+echo -e "\nRunning apt clean..."
+echo -e "--------------------------------------------------------------------\n"
+sudo apt clean 
+
+echo -e "\nDone"
+echo -e "--------------------------------------------------------------------\n"
+
+################################################################
+####################### NVIDIA UPDATE ##########################
+################################################################
+
+ubuntu-drivers -h > /dev/null 2>&1
+let UBUNTU_DRIVERS_EXISTS="$?"
+
+if [ ${UBUNTU_DRIVERS_EXISTS} -eq "0" ] && [[ $(id -u) -eq 0  ]]
+then
+	echo -e "\n===================================================================="
+	echo -e " Running ubuntu-drivers autoinstall..."
+	echo -e "====================================================================\n"
+	ubuntu-drivers autoinstall
+	let UBUNTU_DRIVERS_EXIT_CODE="$?"
+	echo -e "\nDone"
+	echo -e "--------------------------------------------------------------------\n"
+fi
+
+################################################################
+####################### SNAP UPDATE ############################
+################################################################
+
+snap --version > /dev/null 2>&1
+let SNAP_EXISTS="$?"
+
+if [ ${SNAP_EXISTS} -eq "0" ]
+then
+	echo -e "\n===================================================================="
+	echo -e " Running snap refresh..."
+	echo -e "====================================================================\n"
+	sudo snap refresh 
+	let SNAP_EXIT_CODE="$?"
+	echo -e "\nDone"
+	echo -e "--------------------------------------------------------------------\n"
+fi
+
+################################################################
+##################### FLATPAK UPDATE ###########################
+################################################################
+
+flatpak --version > /dev/null 2>&1
+let FLATPAK_EXISTS="$?"
+
+if [ ${FLATPAK_EXISTS} -eq "0" ]
+then
+	echo -e "\n===================================================================="
+	echo -e " Running flatpak update..."
+	echo -e "====================================================================\n"
+	sudo flatpak update
+	let FLATPAK_EXIT_CODE="$?"
+	echo -e "\nDone"
+	echo -e "--------------------------------------------------------------------\n"
+fi
+
+################################################################
+######################### NPM UPDATE ###########################
+################################################################
+
+npm --version > /dev/null 2>&1
+let NPM_EXISTS="$?"
+
+if [ ${NPM_EXISTS} -eq "0" ]
+then
+	echo -e "\n===================================================================="
+	echo -e " Running npm update..."
+	echo -e "====================================================================\n"
+	ncu -g
+	sudo npm update -g
+	let NPM_EXIT_CODE="$?"
+	echo -e "\nDone"
+	echo -e "--------------------------------------------------------------------\n"
+fi
+
+################################################################
+######################### PYTHON UPDATE ########################
+################################################################
+
+python3 --version > /dev/null 2>&1
+let PYTHON_EXISTS="$?"
+
+if [ ${PYTHON_EXISTS} -eq "0" ] && [[ $(id -u) -eq 0  ]]
+then
+	echo -e "\n===================================================================="
+	echo -e " Updating Python packages..."
+	echo -e "====================================================================\n"
+	python3 -m pip install --upgrade pip setuptools wheel youtube-dl numpy matplotlib speedtest-cli virtualenv scipy pipenv 
+	let PIP_EXIT_CODE="$?"
+	echo -e "\nDone"
+	echo -e "--------------------------------------------------------------------\n"
+fi
+
+
+################################################################
+######################## STATUS MESSAGE ########################
+################################################################
+
+
+echo -e "\n===================================================================="
+echo -e " Operations completed with the following exit codes:(0 = SUCCESS)"
+echo -e "====================================================================\n"
+echo "UPDATE : ${UPDATE_EXIT_CODE}"
+echo "UPGRADE: ${UPGRADE_EXIT_CODE}"
+
+if [ ${UBUNTU_DRIVERS_EXISTS} -eq "0" ]
+then
+	echo "NVIDIA : ${UBUNTU_DRIVERS_EXIT_CODE}"
+fi
+
+if [ ${SNAP_EXISTS} -eq "0" ]
+then
+	echo "SNAP   : ${SNAP_EXIT_CODE}"
+fi
+
+if [ ${FLATPAK_EXISTS} -eq "0" ]
+then
+	echo "FLATPAK: ${FLATPAK_EXIT_CODE}"
+fi
+
+if [ ${NPM_EXISTS} -eq "0" ]
+then
+	echo "NPM    : ${NPM_EXIT_CODE}"
+fi
+
+if [ ${PYTHON_EXISTS} -eq "0" ]
+then
+	echo "PIP    : ${PIP_EXIT_CODE}"
+fi
+echo ""
+echo -e "\nDone"
+echo -e "--------------------------------------------------------------------\n"
+
