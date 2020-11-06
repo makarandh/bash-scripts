@@ -1,8 +1,8 @@
 # Just some bash scripts for my personal use
 
-The ones in the bin folder are scripts that I use to make my life a tiny bit easier.
+Just some scripts that I use to make my life a tiny bit easier.
 
-The rest of the stuff I wrote when I was learning and re-learning bash script. 
+
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
