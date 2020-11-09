@@ -20,23 +20,23 @@
 ################################################################
 
 print_usage() {
-    echo "Usage: $(basename ${1}) COMMAND..."
-    echo "   or: $(basename ${1}) -h"
-    echo -e "\n Update components specified in COMMAND. Multiple commands can be separated by spaces."
-    echo " Whether a specified command runs or not is contingent on the component being available in the system."
-    echo -e "\nCommands:"
-    echo " d            Updates dnf packages"
-    echo " t            Updates apt pacakges"
-    echo " s            Updates snap packages"
-    echo " f            Updates flatpak packages"
-    echo -e "\n n            Updates npm global"
-    echo " p            Installs/Updates the following python3 packages:"
-    echo "              pip setuptools wheel youtube-dl numpy matplotlib speedtest-cli virtualenv scipy pipenv" 
+    echo "Usage: $(basename ${1}) OPTION..."
 
-    echo -e "\n g            Updates Ubuntu drivers (Nvidia)"
-    echo " a            Runs all of the above, whatever is available"
+    echo -e "\n Update components depending on the options provided"
+    echo " Whether a specified command runs or not is contingent on the component being available in the system."
+
     echo -e "\nSwitches:"
-    echo " -h           Prints this help menu and exits"
+    echo " -d            Updates dnf packages"
+    echo " -t            Updates apt pacakges"
+    echo " -s            Updates snap packages"
+    echo " -f            Updates flatpak packages"
+    echo " -n            Updates npm global"
+    echo " -p            Installs/Updates python3 packages mentioned below"
+    echo " -g            Updates Ubuntu drivers (Nvidia)"
+    echo " -a            Runs all of the above, whatever is available"
+    echo " -h            Prints this help menu and exits"
+
+    echo -e "\nPython 3 packages: pip setuptools wheel youtube-dl numpy matplotlib speedtest-cli virtualenv scipy pipenv" 
 }
 
 UPDATE_APT=0
@@ -49,20 +49,14 @@ UPDATE_DRIV=0
 
 if [[ ${#} -eq 0 ]]
 then
-    echo -e "ERROR: No commands specified. Please specify one or more commands.\n"
+    echo -e "ERROR: No options specified.\n"
     print_usage ${0}
     exit 1
 fi
 
-if [[ ${1} = "-h" ]]
-then
-    print_usage ${0}
-    exit 0
-fi
-
-for arg in ${@}
+while getopts dtsfnpgah OPTION
 do
-    case ${arg} in 
+    case ${OPTION} in 
         "a")
             UPDATE_APT=1
             UPDATE_DNF=1
@@ -71,7 +65,6 @@ do
             UPDATE_NPM=1
             UPDATE_PY=1
             UPDATE_DRIV=1
-            break 
             ;;
         
         "d")
@@ -95,12 +88,12 @@ do
         "p")
             UPDATE_PY=1
             ;;
-        "-h")
+        "h")
             print_usage ${0}
             exit 0
             ;;
         *)
-            echo "Invalid command: ${arg}"
+            print_usage ${0}
             exit 1
             ;;
     esac
