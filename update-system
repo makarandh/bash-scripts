@@ -29,9 +29,11 @@ print_usage() {
     echo " t            Updates apt pacakges"
     echo " s            Updates snap packages"
     echo " f            Updates flatpak packages"
-    echo " n            Updates npm global"
-    echo " p            Updates some python3 packages"
-    echo " g            Updates Ubuntu drivers (Nvidia)"
+    echo -e "\n n            Updates npm global"
+    echo " p            Installs/Updates the following python3 packages:"
+    echo "              pip setuptools wheel youtube-dl numpy matplotlib speedtest-cli virtualenv scipy pipenv" 
+
+    echo -e "\n g            Updates Ubuntu drivers (Nvidia)"
     echo " a            Runs all of the above, whatever is available"
     echo -e "\nSwitches:"
     echo " -h           Prints this help menu and exits"
@@ -318,7 +320,7 @@ fi
 
 if [[ ${DNF_EXISTS} -eq 0 && ${UPDATE_DNF} -eq 1 ]]
 then
-    echo "DNF UPDATE  : ${DNF_UPDATE_EXIT_CODE}"
+    echo "DNF UPDATE : ${DNF_UPDATE_EXIT_CODE}"
 else
     DNF_UPDATE_EXIT_CODE=0
 fi
