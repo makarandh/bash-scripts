@@ -2,7 +2,7 @@
 
 echo ""
 echo "Running system update"
-/usr/local/sbin/update-system
+/usr/local/sbin/update-system -a
 
 echo ""
 echo "Closing IDEs..."

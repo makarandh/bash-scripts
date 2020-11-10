@@ -13,6 +13,7 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+################################################################
 
 
 ################################################################
@@ -66,7 +67,6 @@ do
             UPDATE_PY=1
             UPDATE_DRIV=1
             ;;
-        
         "d")
             UPDATE_DNF=1
             ;;
@@ -99,8 +99,17 @@ do
     esac
 done
 
-let UPDATE_COUNT=0
+shift $((${OPTIND} - 1))
 
+if [[ ${#} -gt 0 ]]
+then
+    echo "Error: Argument not recognized: ${1}"
+    print_usage ${0}
+    exit 1
+fi
+
+
+let UPDATE_COUNT=0
 
 ################################################################
 ######################## APT UPDATE ############################
@@ -260,6 +269,13 @@ then
 	echo -e "\n===================================================================="
 	echo -e " Running npm update..."
 	echo -e "====================================================================\n"
+    
+    which ncu &> /dev/null
+    if [[ ${?} -ne 0 ]]
+    then
+        sudo npm i -g npm-check-updates
+    fi
+
 	ncu -g
 	sudo npm update -g
 	NPM_EXIT_CODE=${?}
