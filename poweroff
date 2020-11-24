@@ -1,5 +1,14 @@
 #!/bin/bash
 
+echo -e "\nShutdown routine invoked. Press ^c to cancel.\n"
+sleep 2
+for(( i=6; i>0; i--)){
+    echo -n -e "Shutdown will initiate in ${i} seconds.\r"
+    sleep 1
+}
+echo -e "Shutdown process initiated...                      "
+sleep 1
+
 echo ""
 echo "Closing IDEs..."
 wmctrl -c py 2>/dev/null &
