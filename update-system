@@ -121,51 +121,90 @@ APT_EXISTS=${?}
 if [[ ${APT_EXISTS} -eq 0 && ${UPDATE_APT} -eq 1 ]]
 then
     let UPDATE_COUNT++
-    echo 
-    echo -e "\e[01;37m \b===========================================================================================================================\e[0m"
+    echo -e "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "="
+    }
+    echo -e "\e[0m"
     echo -e "\e[01;32m\bUpdating Apt Packages"
-    echo -e "\e[01;37m \b===========================================================================================================================\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "="
+    }
+    echo -e "\e[0m"
     echo 
 
     echo -e "\e[01;32m\nRunning apt update..."
-    echo -e "\e[01;37m \b---------------------------------------------------------------------------------------------------------------------------\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "-"
+    }
+    echo -e "\e[0m"
     echo
     sudo apt update -y 
     UPDATE_EXIT_CODE=${?}
 
     echo -e "\e[01;32m\nRunning dpkg configure..."
-    echo -e "\e[01;37m \b---------------------------------------------------------------------------------------------------------------------------\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "-"
+    }
+    echo -e "\e[0m"
     echo
     sudo dpkg --configure -a
 
     echo -e "\e[01;32m\nRunning apt install -f..."
-    echo -e "\e[01;37m \b---------------------------------------------------------------------------------------------------------------------------\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "-"
+    }
+    echo -e "\e[0m"
     echo
     sudo apt install -f -y
 
     echo -e "\e[01;32m\nRunning apt autoremove..."
-    echo -e "\e[01;37m \b---------------------------------------------------------------------------------------------------------------------------\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "-"
+    }
+    echo -e "\e[0m"
     echo
     sudo apt autoremove -y 
 
     echo -e "\e[01;32m\nRunning apt full-upgrade..."
-    echo -e "\e[01;37m \b---------------------------------------------------------------------------------------------------------------------------\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "-"
+    }
+    echo -e "\e[0m"
     echo
     sudo apt full-upgrade -y 
     UPGRADE_EXIT_CODE=${?}
 
     echo -e "\e[01;32m\nRunning apt install -f..."
-    echo -e "\e[01;37m \b---------------------------------------------------------------------------------------------------------------------------\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "-"
+    }
+    echo -e "\e[0m"
     echo
     sudo apt install -f -y
 
     echo -e "\e[01;32m\nRunning apt autoremove..."
-    echo -e "\e[01;37m \b---------------------------------------------------------------------------------------------------------------------------\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "-"
+    }
+    echo -e "\e[0m"
     echo
     sudo apt autoremove -y 
 
     echo -e "\e[01;32m\nRunning apt clean..."
-    echo -e "\e[01;37m \b---------------------------------------------------------------------------------------------------------------------------\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "-"
+    }
+    echo -e "\e[0m"
     echo
     sudo apt clean 
 
@@ -183,24 +222,44 @@ if [[ ${DNF_EXISTS} -eq 0 && ${UPDATE_DNF} -eq 1 ]]
 then
     let UPDATE_COUNT++
     echo
-    echo -e "\e[01;37m \b===========================================================================================================================\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "="
+    }
+    echo -e "\e[0m"
     echo -e "\e[01;32m\bUpdating Dnf Packages"
-    echo -e "\e[01;37m \b===========================================================================================================================\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "="
+    }
+    echo -e "\e[0m"
     echo
 
     echo -e "\e[01;32m\nRunning dnf update..."
-    echo -e "\e[01;37m \b---------------------------------------------------------------------------------------------------------------------------\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "-"
+    }
+    echo -e "\e[0m"
     echo
     sudo dnf update -y
     DNF_UPDATE_EXIT_CODE=${?}
 
     echo -e "\e[01;32m\nRunning dnf autoremove..."
-    echo -e "\e[01;37m \b---------------------------------------------------------------------------------------------------------------------------\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "-"
+    }
+    echo -e "\e[0m"
     echo
     sudo dnf autoremove -y 
 
     echo -e "\e[01;32m\nRunning dnf clean..."
-    echo -e "\e[01;37m \b---------------------------------------------------------------------------------------------------------------------------\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "-"
+    }
+    echo -e "\e[0m"
     echo
     sudo dnf clean dbcache packages
 fi
@@ -217,9 +276,17 @@ if [[ ${UBUNTU_DRIVERS_EXISTS} -eq 0 && $(id -u) -eq 0 && ${UPDATE_DRIV} -eq 1 ]
 then
     let UPDATE_COUNT++
     echo
-    echo -e "\e[01;37m \b===========================================================================================================================\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "="
+    }
+    echo -e "\e[0m"
 	echo -e "\e[01;32m\bUpdating NVIDIA Drivers"
-    echo -e "\e[01;37m \b===========================================================================================================================\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "="
+    }
+    echo -e "\e[0m"
     echo
 	ubuntu-drivers autoinstall
 	UBUNTU_DRIVERS_EXIT_CODE=${?}
@@ -237,9 +304,17 @@ if [[ ${SNAP_EXISTS} -eq 0 && ${UPDATE_SNAP} -eq 1 ]]
 then
     let UPDATE_COUNT++
     echo
-    echo -e "\e[01;37m \b===========================================================================================================================\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "="
+    }
+    echo -e "\e[0m"
 	echo -e "\e[01;32m \bUpdating Snap Packages"
-    echo -e "\e[01;37m \b===========================================================================================================================\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "="
+    }
+    echo -e "\e[0m"
     echo
 	sudo snap refresh 
 	SNAP_EXIT_CODE=${?}
@@ -257,9 +332,17 @@ if [[ ${FLATPAK_EXISTS} -eq 0 && ${UPDATE_FLAT} -eq 1 ]]
 then
     let UPDATE_COUNT++
     echo
-    echo -e "\e[01;37m \b===========================================================================================================================\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "="
+    }
+    echo -e "\e[0m"
 	echo -e "\e[01;32m \bUpdating Flatpaks"
-    echo -e "\e[01;37m \b===========================================================================================================================\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "="
+    }
+    echo -e "\e[0m"
     echo
 	sudo flatpak update
 	FLATPAK_EXIT_CODE=${?}
@@ -277,9 +360,17 @@ if [[ ${NPM_EXISTS} -eq 0 && ${UPDATE_NPM} -eq 1 ]]
 then
     let UPDATE_COUNT++
     echo
-    echo -e "\e[01;37m \b===========================================================================================================================\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "="
+    }
+    echo -e "\e[0m"
 	echo -e "\e[01;32m \bUpdating NPM Global Packages"
-    echo -e "\e[01;37m \b===========================================================================================================================\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "="
+    }
+    echo -e "\e[0m"
     echo
     
     which ncu &> /dev/null
@@ -306,9 +397,17 @@ if [[ ${PYTHON_EXISTS} -eq 0 && ${UPDATE_PY} -eq 1 ]]
 then
     let UPDATE_COUNT++
     echo
-    echo -e "\e[01;37m \b===========================================================================================================================\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "="
+    }
+    echo -e "\e[0m"
 	echo -e "\e[01;32m \bUpdating Python Packages"
-    echo -e "\e[01;37m \b===========================================================================================================================\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "="
+    }
+    echo -e "\e[0m"
     echo
 	sudo ${PYTHON3} -m pip install --upgrade pip setuptools wheel youtube-dl numpy matplotlib speedtest-cli virtualenv scipy pipenv 
 	PIP_EXIT_CODE=${?}
@@ -326,9 +425,17 @@ then
 fi
 
 echo
-echo -e "\e[01;37m \b===========================================================================================================================\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "="
+    }
+    echo -e "\e[0m"
 echo -e "\e[01;32m \bOperations completed with the following exit codes:(0 = SUCCESS)\e[0m"
-echo -e "\e[01;37m \b===========================================================================================================================\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "="
+    }
+    echo -e "\e[0m"
 echo
 if [[ ${APT_EXISTS} -eq 0 && ${UPDATE_APT} -eq 1 ]]
 then
@@ -433,6 +540,10 @@ fi
 
 echo -e ""
 echo -e "\nTotal components for which update was run: ${UPDATE_COUNT}"
-echo -e "\e[01;37m \b---------------------------------------------------------------------------------------------------------------------------\e[0m"
+    echo -en "\e[01;37m"
+    for((i=0; i<$(tput cols); i++)) {
+        echo -n "-"
+    }
+    echo -e "\e[0m"
 
 exit ${UPDATE_EXIT_CODE} || ${UPGRADE_EXIT_CODE} || ${DNF_UPDATE_EXIT_CODE} || ${UBUNTU_DRIVERS_EXIT_CODE} || ${SNAP_EXIT_CODE} || ${FLATPAK_EXIT_CODE} || ${NPM_EXIT_CODE} || ${PIP_EXIT_CODE}
