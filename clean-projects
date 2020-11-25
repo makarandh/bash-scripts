@@ -17,23 +17,23 @@
 
 
 print_help() {
-    echo "Usage: $(basename ${0}) [-f] CLEANING_OPTION... DIR... "
-    echo "$(basename ${0}) -h"
-    echo "Cleans directories recurisively by deleting temporary, compiled, and downloaded modules."
-    echo "Languages supported: Python, Gradle, Java, NodeJS, Php."
+    echo -e "Usage: $(basename ${0}) [-f] CLEANING_OPTION... DIR... "
+    echo -e "$(basename ${0}) -h"
+    echo -e "Cleans directories recurisively by deleting temporary, compiled, and downloaded modules."
+    echo -e "Languages supported: Python, Gradle, Java, NodeJS, Php."
     echo -e "\nNOTE: It is not safe to provide the home directory as argument. \nThe script will exit if the argument is the user's home directory. \nTo force clean the home directory, use the -f switch."
-    echo "The script may not be able to clean directories with spaces in their names."
+    echo -e "The script may not be able to clean directories with spaces in their names."
     echo -e "\nCleaning options:"
-    echo " -a           Will clean all files."
-    echo " -y           Will clean Python files. Will delete .pyc files."
-    echo " -j           Will clean Java files. Will delete .class and .jar files."
-    echo " -g           Will clean Gradle projects. Will run gradlew clean."
-    echo " -n           Will clean node files. Will delete node_modules folders and contents."
-    echo " -p           Will clean PHP files. Will delete composer vendor folders and contents."
+    echo -e " -a           Will clean all files."
+    echo -e " -y           Will clean Python files. Will delete .pyc files."
+    echo -e " -j           Will clean Java files. Will delete .class and .jar files."
+    echo -e " -g           Will clean Gradle projects. Will run gradlew clean."
+    echo -e " -n           Will clean node files. Will delete node_modules folders and contents."
+    echo -e " -p           Will clean PHP files. Will delete composer vendor folders and contents."
 
     echo -e "\nAdditional options:"
-    echo " -f           Will clean user's home directory, if it's in the arguments."
-    echo " -h           Will display this help and exit."
+    echo -e " -f           Will clean user's home directory, if it's in the arguments."
+    echo -e " -h           Will display this help and exit."
 }
 
 CLEAN_PY=0
@@ -42,6 +42,11 @@ CLEAN_GRADLE=0
 CLEAN_NODE=0
 CLEAN_PHP=0
 FORCE_HOME=0
+
+COLOR_RED='\e[01;31m'
+COLOR_GREEN='\e[01;32m'
+COLOR_WHITE='\e[01;37m'
+COLOR_NONE='\e[0m'
 
 OPTIONS_COUNT=0
 while getopts ayjgnpfh OPTION
@@ -79,7 +84,7 @@ do
             exit 0 
             ;;
         *)
-            echo "ERROR: Invalid option: ${OPTION}"
+            echo -e "${COLOR_RED}ERROR: Invalid option: ${OPTION}${COLOR_NONE}"
             print_help
             exit 1
             ;;
@@ -88,7 +93,7 @@ done
 
 if [[ ${OPTIONS_COUNT} -eq 0 ]]
 then
-	echo "Error: No cleaning options were provided."
+	echo -e "${COLOR_RED}Error: No cleaning options were provided.${COLOR_NONE}"
     print_help
 	exit 1
 fi
@@ -97,7 +102,7 @@ shift $((${OPTIND} - 1))
 
 if [[ ${#} -eq 0 ]]
 then
-	echo "Error: No directories were specified for cleaning."
+	echo -e "${COLOR_RED}Error: No directories were specified for cleaning.${COLOR_NONE}"
     print_help
 	exit 1
 fi
@@ -109,83 +114,93 @@ for DIR_TO_CLEAN in ${@}
 do
     if [[ ! -d ${DIR_TO_CLEAN} ]]
     then
-        echo "${DIR_TO_CLEAN} is not a directory. Skipping..."
+        echo -e "${COLOR_RED}${DIR_TO_CLEAN} is not a directory. Skipping...${COLOR_NONE}"
         continue
     fi
 
     if [[ ${HOME} == $(cd "${DIR_TO_CLEAN}"; pwd) && ${FORCE_HOME} -eq 0 ]]
     then
-        echo "Users Home directory selected without the -f option. Skipping..."
+        echo -e "${COLOR_RED}Users Home directory selected without the -f option. Skipping...${COLOR_NONE}"
         continue
     fi
     DIR_TO_CLEAN=$(cd "${DIR_TO_CLEAN}"; pwd)
     ORIGINAL_DIR="${PWD}"
-    echo -e "\nCleaning ${DIR_TO_CLEAN}"
+    echo -e "${COLOR_GREEN}\nCleaning ${DIR_TO_CLEAN}${COLOR_NONE}"
 
     if [[ ${CLEAN_PY} -eq 1 ]]
     then
-        echo -e "\nCleaning Python projects"
-        echo -e "======================================================="
+        echo -e "${COLOR_GREEN}\nCleaning Python projects${COLOR_NONE}"
+        echo -e "${COLOR_WHITE}=======================================================${COLOR_NONE}"
 
         cd "${DIR_TO_CLEAN}"
         while read FILE_TO_DEL
         do
             if [[ -f ${FILE_TO_DEL} ]]
             then
-                echo "Deleting ${FILE_TO_DEL}"
+                echo -e "${COLOR_GREEN}Deleting ${FILE_TO_DEL}${COLOR_NONE}"
                 rm -f "${FILE_TO_DEL}"
+                if [[ ${?} -ne 0 ]]
+                then
+                    ERROR_FILES[${ERROR_COUNT}]="${FILE_TO_DEL}"
+                    let ERROR_COUNT++
+                fi
             else
-                echo "ERROR: Could not delete ${FILE_TO_DEL} --- Not a file"
+                echo -e "${COLOR_RED}ERROR: Could not delete ${FILE_TO_DEL} --- Not a file${COLOR_NONE}"
                 ERROR_FILES[${ERROR_COUNT}]="${FILE_TO_DEL}"
                 let ERROR_COUNT++
             fi
         done < <(find . -type f -name "*.pyc") 
-        echo "Done"
-        echo "-------------------------------------------------------"
+        echo -e "${COLOR_GREEN}Done${COLOR_NONE}"
+        echo -e "${COLOR_WHITE}-------------------------------------------------------${COLOR_NONE}"
     fi
 
     if [[ ${CLEAN_GRADLE} -eq 1 ]]
     then
-        echo -e "\nCleaning Gradle projects"
-        echo -e "======================================================="
+        echo -e "${COLOR_GREEN}\nCleaning Gradle projects${COLOR_NONE}"
+        echo -e "${COLOR_WHITE}=======================================================${COLOR_NONE}"
 
         cd "${DIR_TO_CLEAN}"
         while read FILE_TO_CLEAN
         do
             if [[ -x ${FILE_TO_CLEAN} ]]
             then
-                echo -e "\nGradle file found ${FILE_TO_CLEAN}"
+                echo -e "${COLOR_GREEN}\nGradle file found ${FILE_TO_CLEAN}${COLOR_NONE}"
                 PROJ_DIR=$(dirname "${FILE_TO_CLEAN}")
-                echo "Descending into ${PROJ_DIR}"
+                echo -e "${COLOR_GREEN}Descending into ${PROJ_DIR}${COLOR_NONE}"
                 cd "${PROJ_DIR}"
                 ./gradlew clean
                 cd "${ORIGINAL_DIR}"
                 echo 
             else
-                echo -e "ERROR: Could not clean gradle project: ${FILE_TO_CLEAN}."
+                echo -e "${COLOR_RED}ERROR: Could not clean gradle project: ${FILE_TO_CLEAN}.${COLOR_NONE}"
                 ERROR_FILES[${ERROR_COUNT}]="${FILE_TO_CLEAN}"
                 let ERROR_COUNT++
             fi
         done < <(find . -type f -name "*gradlew") 
         kill -15 $( ps -ef | grep -i "java" | grep -i "gradle" | tr -s " " | cut -d " " -f 2 ) 2> /dev/null
-        echo "Done"
-        echo "-------------------------------------------------------"
+        echo -e "${COLOR_GREEN}Done${COLOR_NONE}"
+        echo -e "${COLOR_WHITE}-------------------------------------------------------${COLOR_NONE}"
     fi
 
     if [[ ${CLEAN_JAVA} -eq 1 ]]
     then
-        echo -e "\nCleaning Java projects"
-        echo -e "======================================================="
+        echo -e "${COLOR_GREEN}\nCleaning Java projects${COLOR_NONE}"
+        echo -e "${COLOR_WHITE}=======================================================${COLOR_NONE}"
 
         cd "${DIR_TO_CLEAN}"
         while read FILE_TO_DEL
         do
             if [[ -f ${FILE_TO_DEL} ]]
             then
-                echo "Deleting ${FILE_TO_DEL}"
+                echo -e "${COLOR_GREEN}Deleting ${FILE_TO_DEL}${COLOR_NONE}"
                 rm -f "${FILE_TO_DEL}"
+                if [[ ${?} -ne 0 ]]
+                then
+                    ERROR_FILES[${ERROR_COUNT}]="${FILE_TO_DEL}"
+                    let ERROR_COUNT++
+                fi
             else
-                echo "ERROR: Could not delete ${FILE_TO_DEL} --- Not a file"
+                echo -e "${COLOR_RED}ERROR: Could not delete ${FILE_TO_DEL} --- Not a file${COLOR_NONE}"
                 ERROR_FILES[${ERROR_COUNT}]="${FILE_TO_DEL}"
                 let ERROR_COUNT++
             fi
@@ -196,23 +211,28 @@ do
         do
             if [[ -f ${FILE_TO_DEL} ]]
             then
-                echo "Deleting ${FILE_TO_DEL}"
+                echo -e "${COLOR_GREEN}Deleting ${FILE_TO_DEL}${COLOR_NONE}"
                 rm -f "${FILE_TO_DEL}"
+                if [[ ${?} -ne 0 ]]
+                then
+                    ERROR_FILES[${ERROR_COUNT}]="${FILE_TO_DEL}"
+                    let ERROR_COUNT++
+                fi
             else
-                echo "ERROR: Could not delete ${FILE_TO_DEL} --- Not a file"
+                echo -e "${COLOR_RED}ERROR: Could not delete ${FILE_TO_DEL} --- Not a file${COLOR_NONE}"
                 ERROR_FILES[${ERROR_COUNT}]="${FILE_TO_DEL}"
                 let ERROR_COUNT++
             fi
         done < <(find . -type f -iname "*jar" | grep 'out/artifacts')
         
-        echo "Done"
-        echo "-------------------------------------------------------"
+        echo -e "${COLOR_GREEN}Done${COLOR_NONE}"
+        echo -e "${COLOR_WHITE}-------------------------------------------------------${COLOR_NONE}"
     fi
 
     if [[ ${CLEAN_NODE} -eq 1 ]]
     then
-        echo -e "\nCleaning node_modules"
-        echo -e "======================================================="
+        echo -e "${COLOR_GREEN}\nCleaning node_modules${COLOR_NONE}"
+        echo -e "${COLOR_WHITE}=======================================================${COLOR_NONE}"
 
         cd "${DIR_TO_CLEAN}"
         while read FILE_TO_DEL
@@ -224,24 +244,29 @@ do
 
             if [[ -d ${FILE_TO_DEL} ]]
             then
-                echo "Deleting ${FILE_TO_DEL}"
+                echo -e "${COLOR_GREEN}Deleting ${FILE_TO_DEL}${COLOR_NONE}"
                 rm -rf "${FILE_TO_DEL}"
+                if [[ ${?} -ne 0 ]]
+                then
+                    ERROR_FILES[${ERROR_COUNT}]="${FILE_TO_DEL}"
+                    let ERROR_COUNT++
+                fi
             else
-                echo "ERROR: Could not delete ${FILE_TO_DEL} --- Not a directory"
+                echo -e "${COLOR_RED}ERROR: Could not delete ${FILE_TO_DEL} --- Not a directory${COLOR_NONE}"
                 ERROR_FILES[${ERROR_COUNT}]="${FILE_TO_DEL}"
                 let ERROR_COUNT++
             fi
         done < <(find . -type d -name "node_modules") 
         
-        echo "Done"
-        echo "-------------------------------------------------------"
+        echo -e "${COLOR_GREEN}Done${COLOR_NONE}"
+        echo -e "${COLOR_WHITE}-------------------------------------------------------${COLOR_NONE}"
 
     fi
 
     if [[ ${CLEAN_PHP} -eq 1 ]]
     then
-        echo -e "\nCleaning php composer vendor files"
-        echo -e "======================================================="
+        echo -e "${COLOR_GREEN}\nCleaning php composer vendor files${COLOR_NONE}"
+        echo -e "${COLOR_WHITE}=======================================================${COLOR_NONE}"
 
         cd "${DIR_TO_CLEAN}"
         while read FILE_TO_DEL
@@ -252,32 +277,37 @@ do
             fi
             if [[ -d ${FILE_TO_DEL} ]]
             then
-                echo "Deleting ${FILE_TO_DEL}"
+                echo -e "${COLOR_GREEN}Deleting ${FILE_TO_DEL}${COLOR_NONE}"
                 rm -rf "${FILE_TO_DEL}"
+                if [[ ${?} -ne 0 ]]
+                then
+                    ERROR_FILES[${ERROR_COUNT}]="${FILE_TO_DEL}"
+                    let ERROR_COUNT++
+                fi
             else
-                echo "ERROR: Could not delete ${FILE_TO_DEL} --- Not a directory"
+                echo -e "${COLOR_RED}ERROR: Could not delete ${FILE_TO_DEL} --- Not a directory${COLOR_NONE}"
                 ERROR_FILES[${ERROR_COUNT}]="${FILE_TO_DEL}"
                 let ERROR_COUNT++
             fi
         done < <(find . -type d -name "vendor")
 
-        echo "Done"
-        echo "-------------------------------------------------------"
+        echo -e "${COLOR_GREEN}Done${COLOR_NONE}"
+        echo -e "${COLOR_WHITE}-------------------------------------------------------${COLOR_NONE}"
     fi
 
 done
 
 if [[ ${ERROR_COUNT} -gt 0 ]]
 then
-    echo -e "\nSome files could not be cleaned and requires user action:"
+    echo -e "${COLOR_RED}\nSome files could not be cleaned and requires user action:${COLOR_NONE}"
 
     for((i=0; i<${ERROR_COUNT}; i++))
     do
-        echo "${ERROR_FILES[i]}"
+        echo -e "${COLOR_RED}${ERROR_FILES[i]}${COLOR_NONE}"
     done
     exit 2
 fi
 
-echo -e "\nAll requested files were successfully cleaned."
+echo -e "${COLOR_GREEN}\nAll requested files were successfully cleaned.${COLOR_NONE}"
 exit 0
 

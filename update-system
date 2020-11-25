@@ -538,8 +538,7 @@ else
     PIP_EXIT_CODE=0
 fi
 
-echo -e ""
-echo -e "\nTotal components for which update was run: ${UPDATE_COUNT}"
+echo -e "\nTotal components for which update was run: \e[01;32m${UPDATE_COUNT}"
     echo -en "\e[01;37m"
     for((i=0; i<$(tput cols); i++)) {
         echo -n "-"
