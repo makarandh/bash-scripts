@@ -14,8 +14,28 @@
     # You should have received a copy of the GNU General Public License
     # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+###################################################################################
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/mak/apps/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/mak/apps/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/mak/apps/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/mak/apps/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+COLOR_RED='\e[01;31m'
+COLOR_GREEN='\e[01;32m'
+COLOR_NONE='\e[0m'
+
 echo -e "\n----------------------------------------------------------------------------"
-echo -e " Updating Conda"
+echo -e "${COLOR_GREEN}Updating Conda${COLOR_NONE}"
 echo -e "----------------------------------------------------------------------------\n"
 conda update conda -y 
 let CONDA_EXIT_CODE="$?"
@@ -24,7 +44,7 @@ let CONDA_EXIT_CODE="$?"
 #conda clean -a -y 
 
 echo -e "\n----------------------------------------------------------------------------"
-echo -e " Updating Anaconda"
+echo -e "${COLOR_GREEN}Updating Anaconda${COLOR_NONE}"
 echo -e "----------------------------------------------------------------------------\n"
 conda update anaconda -y 
 let ANACONDA_EXIT_CODE="$?"
@@ -33,20 +53,39 @@ let ANACONDA_EXIT_CODE="$?"
 #conda clean -a -y 
 
 echo -e "\n----------------------------------------------------------------------------"
-echo -e " Updating All Conda Packages"
+echo -e "${COLOR_GREEN}Updating All Conda Packages${COLOR_NONE}"
 echo -e "----------------------------------------------------------------------------\n"
 conda update --all -y
 let ALL_EXIT_CODE="$?"
 
 #echo -e "\n----------------------------------------------------------------------------"
-#echo -e " Cleaning..."
+#echo -e "${COLOR_GREEN} Cleaning...${COLOR_NONE}"
 #echo -e "----------------------------------------------------------------------------\n"
 #conda clean -a -y 
 
 echo -e "\n----------------------------------------------------------------------------"
-echo -e " Operations completed with the following exit codes:"
+echo -e "${COLOR_GREEN}Operations completed with the following exit codes:${COLOR_NONE}"
 echo -e "----------------------------------------------------------------------------\n"
-echo "CONDA   : ${CONDA_EXIT_CODE}"
-echo "ANACONDA: ${ANACONDA_EXIT_CODE}"
-echo "ALL     : ${ALL_EXIT_CODE}"
-echo ""
+
+if [[ ${CONDA_EXIT_CODE} -eq 0 ]]
+then
+    echo -e "${COLOR_GREEN}CONDA   : ${CONDA_EXIT_CODE}${COLOR_NONE}"
+else
+    echo -e "${COLOR_RED}CONDA   : ${CONDA_EXIT_CODE}${COLOR_NONE}"
+fi
+
+if [[ ${ANACONDA_EXIT_CODE} -eq 0 ]]
+then
+    echo -e "${COLOR_GREEN}ANACONDA: ${ANACONDA_EXIT_CODE}${COLOR_NONE}"
+else
+    echo -e "${COLOR_RED}ANACONDA: ${ANACONDA_EXIT_CODE}${COLOR_NONE}"
+fi
+
+if [[ ${ALL_EXIT_CODE} -eq 0 ]]
+then
+    echo -e "${COLOR_GREEN}ALL     : ${ALL_EXIT_CODE}${COLOR_NONE}"
+else
+    echo -e "${COLOR_RED}ALL     : ${ALL_EXIT_CODE}${COLOR_NONE}"
+fi
+
+echo -e ""
