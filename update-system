@@ -118,27 +118,28 @@ let UPDATE_COUNT=0
 apt --version > /dev/null 2>&1 
 APT_EXISTS=${?}
 
+EQUAL_LINE=""
+DASH_LINE=""
+for((i=0; i<$(tput cols); i++)) {
+    EQUAL_LINE+="="
+    DASH_LINE+="-"
+}
+
 if [[ ${APT_EXISTS} -eq 0 && ${UPDATE_APT} -eq 1 ]]
 then
     let UPDATE_COUNT++
     echo -e "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "="
-    }
+    echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
     echo -e "\e[01;32m\bUpdating Apt Packages"
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "="
-    }
+    echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
     echo 
 
     echo -e "\e[01;32m\nRunning apt update..."
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "-"
-    }
+    echo -n "${DASH_LINE}"
     echo -e "\e[0m"
     echo
     sudo apt update -y 
@@ -146,36 +147,28 @@ then
 
     echo -e "\e[01;32m\nRunning dpkg configure..."
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "-"
-    }
+    echo -n "${DASH_LINE}"
     echo -e "\e[0m"
     echo
     sudo dpkg --configure -a
 
     echo -e "\e[01;32m\nRunning apt install -f..."
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "-"
-    }
+    echo -n "${DASH_LINE}"
     echo -e "\e[0m"
     echo
     sudo apt install -f -y
 
     echo -e "\e[01;32m\nRunning apt autoremove..."
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "-"
-    }
+    echo -n "${DASH_LINE}"
     echo -e "\e[0m"
     echo
     sudo apt autoremove -y 
 
     echo -e "\e[01;32m\nRunning apt full-upgrade..."
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "-"
-    }
+    echo -n "${DASH_LINE}"
     echo -e "\e[0m"
     echo
     sudo apt full-upgrade -y 
@@ -183,27 +176,21 @@ then
 
     echo -e "\e[01;32m\nRunning apt install -f..."
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "-"
-    }
+    echo -n "${DASH_LINE}"
     echo -e "\e[0m"
     echo
     sudo apt install -f -y
 
     echo -e "\e[01;32m\nRunning apt autoremove..."
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "-"
-    }
+    echo -n "${DASH_LINE}"
     echo -e "\e[0m"
     echo
     sudo apt autoremove -y 
 
     echo -e "\e[01;32m\nRunning apt clean..."
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "-"
-    }
+    echo -n "${DASH_LINE}"
     echo -e "\e[0m"
     echo
     sudo apt clean 
@@ -223,23 +210,17 @@ then
     let UPDATE_COUNT++
     echo
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "="
-    }
+    echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
     echo -e "\e[01;32m\bUpdating Dnf Packages"
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "="
-    }
+    echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
     echo
 
     echo -e "\e[01;32m\nRunning dnf update..."
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "-"
-    }
+    echo -n "${DASH_LINE}"
     echo -e "\e[0m"
     echo
     sudo dnf update -y
@@ -247,18 +228,14 @@ then
 
     echo -e "\e[01;32m\nRunning dnf autoremove..."
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "-"
-    }
+    echo -n "${DASH_LINE}"
     echo -e "\e[0m"
     echo
     sudo dnf autoremove -y 
 
     echo -e "\e[01;32m\nRunning dnf clean..."
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "-"
-    }
+    echo -n "${DASH_LINE}"
     echo -e "\e[0m"
     echo
     sudo dnf clean dbcache packages
@@ -277,15 +254,11 @@ then
     let UPDATE_COUNT++
     echo
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "="
-    }
+    echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
 	echo -e "\e[01;32m\bUpdating NVIDIA Drivers"
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "="
-    }
+    echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
     echo
 	ubuntu-drivers autoinstall
@@ -305,15 +278,11 @@ then
     let UPDATE_COUNT++
     echo
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "="
-    }
+    echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
 	echo -e "\e[01;32m \bUpdating Snap Packages"
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "="
-    }
+    echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
     echo
 	sudo snap refresh 
@@ -333,15 +302,11 @@ then
     let UPDATE_COUNT++
     echo
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "="
-    }
+    echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
 	echo -e "\e[01;32m \bUpdating Flatpaks"
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "="
-    }
+    echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
     echo
 	sudo flatpak update
@@ -361,15 +326,11 @@ then
     let UPDATE_COUNT++
     echo
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "="
-    }
+    echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
 	echo -e "\e[01;32m \bUpdating NPM Global Packages"
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "="
-    }
+    echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
     echo
     
@@ -398,15 +359,11 @@ then
     let UPDATE_COUNT++
     echo
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "="
-    }
+    echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
 	echo -e "\e[01;32m \bUpdating Python Packages"
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "="
-    }
+    echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
     echo
 	sudo ${PYTHON3} -m pip install --upgrade pip setuptools wheel youtube-dl numpy matplotlib speedtest-cli virtualenv scipy pipenv 
@@ -426,15 +383,11 @@ fi
 
 echo
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "="
-    }
+    echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
 echo -e "\e[01;32m \bOperations completed with the following exit codes:(0 = SUCCESS)\e[0m"
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "="
-    }
+    echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
 echo
 if [[ ${APT_EXISTS} -eq 0 && ${UPDATE_APT} -eq 1 ]]
@@ -540,9 +493,7 @@ fi
 
 echo -e "\nTotal components for which update was run: \e[01;32m${UPDATE_COUNT}"
     echo -en "\e[01;37m"
-    for((i=0; i<$(tput cols); i++)) {
-        echo -n "-"
-    }
+    echo -n "${DASH_LINE}"
     echo -e "\e[0m"
 
 exit ${UPDATE_EXIT_CODE} || ${UPGRADE_EXIT_CODE} || ${DNF_UPDATE_EXIT_CODE} || ${UBUNTU_DRIVERS_EXIT_CODE} || ${SNAP_EXIT_CODE} || ${FLATPAK_EXIT_CODE} || ${NPM_EXIT_CODE} || ${PIP_EXIT_CODE}
