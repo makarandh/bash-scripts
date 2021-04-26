@@ -366,7 +366,7 @@ then
     echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
     echo
-	sudo ${PYTHON3} -m pip install --upgrade pip setuptools wheel youtube-dl numpy matplotlib speedtest-cli virtualenv scipy pipenv 
+	sudo ${PYTHON3} -m pip install --upgrade pip setuptools wheel youtube-dl speedtest-cli pipenv 2> /dev/null 
 	PIP_EXIT_CODE=${?}
 fi
 
