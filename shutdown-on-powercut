@@ -1,0 +1,40 @@
+#!/bin/bash
+
+ping_fail_count=0
+fail_limit=12
+while true
+do
+    if [[ ${ping_fail_count} -ge ${fail_limit} ]]
+    then
+        echo "Connection failed after ${ping_fail_count} tries. Initiating shutdown..."
+        break
+    fi
+
+    ret=0
+    while [[ ${ret} -eq 0 ]]
+    do
+        echo -e -n "`date +%F\ %r` Checking connection... "
+        ping -c 5 www.google.com > /dev/null 2>&1  
+        ret=$?
+
+        if [[ ${ret} -eq 0 ]]
+        then
+           echo -e "Successful."
+        else
+            echo -e "Failed."
+        fi
+
+        if [[ ${ret} -eq 0 ]] && [[ ${ping_fail_count} -gt 0 ]]
+        then
+            echo "Connection restored. Resetting fail count to 0."
+            ping_fail_count=0
+        fi
+        sleep 60
+    done
+    ping_fail_count=$(( ${ping_fail_count}+1 ))
+    echo "Connection failed. Fail count: ${ping_fail_count}. Will shutdown when it reaches ${fail_limit}."
+    sleep 60
+done
+
+echo "It was fun while it lasted. Goodbye."
+poweroff 

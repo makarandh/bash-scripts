@@ -15,9 +15,9 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-echo -e "\n\e[01;32m\bShutdown routine invoked. \e[01;31m\b Press ^c to cancel. \e[0m\n"
+echo -e "\n\e[01;31m\bShutdown routine invoked. \e[01;32m\b Press ^c to cancel. \e[0m\n"
 sleep 2
-for(( i=6; i>0; i--)){
+for(( i=3; i>0; i--)){
     echo -n -e "Shutdown will initiate in \e[01;31m\b ${i} \e[0m\b seconds.\r"
     sleep 1
 }
@@ -52,7 +52,7 @@ echo "Killing java..."
 killall java 2>/dev/null
 sleep 2
 
-dc=$( ps -ef | grep -i "dolphin" | wc -l )
+dc=$( wmctrl -l | grep -i "dolphin" | wc -l )
 while [ ${dc} -gt 0 ] 
 do 
 	echo "Closing dolphin window #${dc}"
@@ -63,6 +63,7 @@ done
 
 echo "Closing remaining open windows..."
 wmctrl -l | tr -s " " |  cut -d" " -f 4 | grep -iv "desktop" | grep -iv "plasma" | grep -iv "mak" | grep -iv "root" |  xargs -i wmctrl -c {} &
+killall steam >  /dev/null 2>&1
 sleep 2
 
 echo "Closing qbittorrent..."

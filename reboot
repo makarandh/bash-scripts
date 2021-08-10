@@ -28,7 +28,7 @@ echo "Killing java..."
 killall java 2>/dev/null
 sleep 2
 
-dc=$( ps -ef | grep -i "dolphin$" | wc -l )
+dc=$( wmctrl -l | grep -i "dolphin" | wc -l )
 while [ ${dc} -gt 0 ] 
 do 
 	echo "Closing dolphin window #${dc}"

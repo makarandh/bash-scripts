@@ -30,6 +30,7 @@ print_help() {
     echo -e " -g           Will clean Gradle projects. Will run gradlew clean."
     echo -e " -n           Will clean node files. Will delete node_modules folders and contents."
     echo -e " -p           Will clean PHP files. Will delete composer vendor folders and contents."
+    echo -e " -d           Will clean Arduino uno built folders cmake-build-debug and cmake-build-uno."
 
     echo -e "\nAdditional options:"
     echo -e " -f           Will clean user's home directory, if it's in the arguments."
@@ -40,6 +41,7 @@ CLEAN_PY=0
 CLEAN_JAVA=0
 CLEAN_GRADLE=0
 CLEAN_NODE=0
+CLEAN_PHP=0
 CLEAN_PHP=0
 FORCE_HOME=0
 
@@ -59,6 +61,10 @@ do
             CLEAN_GRADLE=1
             CLEAN_NODE=1
             CLEAN_PHP=1
+            CLEAN_UNO=1
+            ;;
+        "d")
+            CLEAN_UNO=1
             ;;
         "y")
             CLEAN_PY=1
@@ -123,8 +129,8 @@ do
         echo -e "${COLOR_RED}Users Home directory selected without the -f option. Skipping...${COLOR_NONE}"
         continue
     fi
-    DIR_TO_CLEAN=$(cd "${DIR_TO_CLEAN}"; pwd)
     ORIGINAL_DIR="${PWD}"
+    DIR_TO_CLEAN=$(cd "${DIR_TO_CLEAN}"; pwd)
     echo -e "${COLOR_GREEN}\nCleaning ${DIR_TO_CLEAN}${COLOR_NONE}"
 
     if [[ ${CLEAN_PY} -eq 1 ]]
@@ -160,6 +166,7 @@ do
         echo -e "${COLOR_WHITE}=======================================================${COLOR_NONE}"
 
         cd "${DIR_TO_CLEAN}"
+        PARENT_DIR=${PWD}
         while read FILE_TO_CLEAN
         do
             if [[ -x ${FILE_TO_CLEAN} ]]
@@ -169,7 +176,7 @@ do
                 echo -e "${COLOR_GREEN}Descending into ${PROJ_DIR}${COLOR_NONE}"
                 cd "${PROJ_DIR}"
                 ./gradlew clean
-                cd "${ORIGINAL_DIR}"
+                cd "${PARENT_DIR}"
                 echo 
             else
                 echo -e "${COLOR_RED}ERROR: Could not clean gradle project: ${FILE_TO_CLEAN}.${COLOR_NONE}"
@@ -257,6 +264,64 @@ do
                 let ERROR_COUNT++
             fi
         done < <(find . -type d -name "node_modules") 
+        
+        echo -e "${COLOR_GREEN}Done${COLOR_NONE}"
+        echo -e "${COLOR_WHITE}-------------------------------------------------------${COLOR_NONE}"
+
+    fi
+
+    if [[ ${CLEAN_UNO} -eq 1 ]]
+    then
+        echo -e "${COLOR_GREEN}\nCleaning Arduino build folders${COLOR_NONE}"
+        echo -e "${COLOR_WHITE}=======================================================${COLOR_NONE}"
+
+        cd "${DIR_TO_CLEAN}"
+        while read FILE_TO_DEL
+        do
+            if [[ ! -d $(echo ${FILE_TO_DEL} | sed 's/\/cmake-build-uno//g') ]]
+            then
+                continue
+            fi
+
+            if [[ -d ${FILE_TO_DEL} ]]
+            then
+                echo -e "${COLOR_GREEN}Deleting ${FILE_TO_DEL}${COLOR_NONE}"
+                rm -rf "${FILE_TO_DEL}"
+                if [[ ${?} -ne 0 ]]
+                then
+                    ERROR_FILES[${ERROR_COUNT}]="${FILE_TO_DEL}"
+                    let ERROR_COUNT++
+                fi
+            else
+                echo -e "${COLOR_RED}ERROR: Could not delete ${FILE_TO_DEL} --- Not a directory${COLOR_NONE}"
+                ERROR_FILES[${ERROR_COUNT}]="${FILE_TO_DEL}"
+                let ERROR_COUNT++
+            fi
+        done < <(find . -type d -name "cmake-build-uno") 
+        
+        cd "${DIR_TO_CLEAN}"
+        while read FILE_TO_DEL
+        do
+            if [[ ! -d $(echo ${FILE_TO_DEL} | sed 's/\/cmake-build-debug//g') ]]
+            then
+                continue
+            fi
+
+            if [[ -d ${FILE_TO_DEL} ]]
+            then
+                echo -e "${COLOR_GREEN}Deleting ${FILE_TO_DEL}${COLOR_NONE}"
+                rm -rf "${FILE_TO_DEL}"
+                if [[ ${?} -ne 0 ]]
+                then
+                    ERROR_FILES[${ERROR_COUNT}]="${FILE_TO_DEL}"
+                    let ERROR_COUNT++
+                fi
+            else
+                echo -e "${COLOR_RED}ERROR: Could not delete ${FILE_TO_DEL} --- Not a directory${COLOR_NONE}"
+                ERROR_FILES[${ERROR_COUNT}]="${FILE_TO_DEL}"
+                let ERROR_COUNT++
+            fi
+        done < <(find . -type d -name "cmake-build-debug") 
         
         echo -e "${COLOR_GREEN}Done${COLOR_NONE}"
         echo -e "${COLOR_WHITE}-------------------------------------------------------${COLOR_NONE}"

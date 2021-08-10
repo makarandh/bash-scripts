@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
     # This program is free software: you can redistribute it and/or modify
     # it under the terms of the GNU General Public License as published by
     # the Free Software Foundation, either version 3 of the License, or
@@ -13,16 +14,16 @@
     # You should have received a copy of the GNU General Public License
     # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+echo ""
+echo "Stopping wpa_supplicant..."
+service wpa_supplicant stop
+sleep 1
 
-ret=100
+echo "Stopping network-manager..."
+service network-manager stop
+sleep 1
 
-while [ "$ret" -eq "100" ]
-do
-	sleep 120
-	echo -e "\n`date +%F\ %r` Trying to connect to server... \n"
-	apt update > /dev/null 2>&1
-	ret=$?
-	echo -e "\n`date +%F\ %r` Return value: $ret\n"
-done
+echo "Stoping expressvpn..."
+service expressvpn stop
+sleep 1
 
-wall "Check Internet"

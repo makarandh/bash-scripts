@@ -5,9 +5,11 @@ then
 
 	chown -R -c www-data:mak  /var/www/html
 	chmod -R -c ug+rw  /var/www/html
-	find /var/www/html -type d | xargs -i chmod -c ug+x  {}
+	chmod -R -c o+r  /var/www/html
+	find /var/www/html -type d | xargs -i chmod -c ugo+x  {}
 else
 	chown -R www-data:mak  /var/www/html
 	chmod -R ug+rw  /var/www/html
-	find /var/www/html -type d | xargs -i chmod ug+x  {}
+	chmod -R o+r  /var/www/html
+	find /var/www/html -type d | xargs -i chmod ugo+x  {}
 fi
