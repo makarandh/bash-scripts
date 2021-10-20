@@ -33,6 +33,7 @@ do
     done
     ping_fail_count=$(( ${ping_fail_count}+1 ))
     echo "Connection failed. Fail count: ${ping_fail_count}. Will shutdown when it reaches ${fail_limit}."
+    wall Connection failure 
     sleep 60
 done
 

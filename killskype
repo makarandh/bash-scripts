@@ -1,0 +1,17 @@
+#!/bin/bash
+
+killall skypeforlinux
+sleep 5
+
+instances=$( ps -ef | grep -i "skypeforlinux" | wc -l )
+count=0
+while [ ${instances} -gt 1 ] && [ ${count} -le 10 ] 
+do
+	echo "Killing skype...."
+	killall skypeforlinux
+	count=$(( ${count} + 1 ))
+	echo "Kill skype count ${count}"
+	sleep 5
+	instances=$( ps -ef | grep -i "skypeforlinux" | wc -l )
+done
+echo "Skype is down. Exiting..."

@@ -27,6 +27,7 @@ sleep 1
 echo ""
 echo "Closing IDEs..."
 wmctrl -c py 2>/dev/null &
+wmctrl -c ion  2>/dev/null &
 wmctrl -c php 2>/dev/null &
 wmctrl -c js 2>/dev/null &
 wmctrl -c code 2>/dev/null &
@@ -90,7 +91,8 @@ sudo /usr/sbin/service wpa_supplicant stop
 sleep 1
 
 echo "Stopping network-manager..."
-sudo /usr/sbin/service network-manager stop
+sudo /usr/sbin/service network-manager stop 2> /dev/null
+service NetworkManager stop 2> /dev/null
 sleep 1 
 
 echo "Stoping expressvpn..."

@@ -120,7 +120,16 @@ APT_EXISTS=${?}
 
 EQUAL_LINE=""
 DASH_LINE=""
-for((i=0; i<$(tput cols); i++)) {
+tput cols > /dev/null 2>&1
+RET=${?}
+if [[ ${RET} -ne 0 ]]
+then
+    COLS=60
+else
+    COLS=$(tput cols)
+fi
+
+for((i=0; i<${COLS}; i++)) {
     EQUAL_LINE+="="
     DASH_LINE+="-"
 }

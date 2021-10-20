@@ -35,7 +35,8 @@ service wpa_supplicant stop
 sleep 1
 
 echo "Stopping network-manager..."
-service network-manager stop
+service network-manager stop 2> /dev/null
+service NetworkManager stop 2> /dev/null
 sleep 1
 
 echo "Stoping expressvpn..."
@@ -47,7 +48,8 @@ service expressvpn start
 sleep 1
 
 echo "Starting network-manager..."
-service network-manager start
+service network-manager start 2> /dev/null
+service NetworkManager start 2> /dev/null
 sleep 1
 
 echo "Starting wpa_supplicant..."

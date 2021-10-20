@@ -7,6 +7,7 @@ echo "Running system update"
 echo ""
 echo "Closing IDEs..."
 wmctrl -c py  2>/dev/null &
+wmctrl -c ion  2>/dev/null &
 wmctrl -c js  2>/dev/null &
 wmctrl -c code  2>/dev/null &
 wmctrl -c java 2>/dev/null &
@@ -51,7 +52,7 @@ sleep 2
 
 echo "Closing other terminals..."
 term=$(tty | cut -d/ -f3,4)
-ps -e | grep pts | grep -v ${term} | grep bash | tr -d " " | cut -d p -f 1 | xargs -i kill {}
+ps -e | grep pts | grep -v ${term} | grep bash | tr -d " " | cut -d p -f 1 | xargs -i kill -9 {}
 sleep 1
 
 echo "Unmounting Veracrypt drives..."

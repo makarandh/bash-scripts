@@ -43,15 +43,15 @@ let CONDA_EXIT_CODE="$?"
 #echo -e "\nCleaning..."
 #conda clean -a -y 
 
-echo -e "\n----------------------------------------------------------------------------"
-echo -e "${COLOR_GREEN}Updating Anaconda${COLOR_NONE}"
-echo -e "----------------------------------------------------------------------------\n"
-conda update anaconda -y 
-let ANACONDA_EXIT_CODE="$?"
-
-#echo -e "\nCleaning..."
-#conda clean -a -y 
-
+# echo -e "\n----------------------------------------------------------------------------"
+# echo -e "${COLOR_GREEN}Updating Anaconda${COLOR_NONE}"
+# echo -e "----------------------------------------------------------------------------\n"
+# conda update anaconda -y 
+# let ANACONDA_EXIT_CODE="$?"
+# 
+# #echo -e "\nCleaning..."
+# #conda clean -a -y 
+# 
 echo -e "\n----------------------------------------------------------------------------"
 echo -e "${COLOR_GREEN}Updating All Conda Packages${COLOR_NONE}"
 echo -e "----------------------------------------------------------------------------\n"
@@ -73,13 +73,13 @@ then
 else
     echo -e "${COLOR_RED}CONDA   : ${CONDA_EXIT_CODE}${COLOR_NONE}"
 fi
-
-if [[ ${ANACONDA_EXIT_CODE} -eq 0 ]]
-then
-    echo -e "${COLOR_GREEN}ANACONDA: ${ANACONDA_EXIT_CODE}${COLOR_NONE}"
-else
-    echo -e "${COLOR_RED}ANACONDA: ${ANACONDA_EXIT_CODE}${COLOR_NONE}"
-fi
+# 
+# if [[ ${ANACONDA_EXIT_CODE} -eq 0 ]]
+# then
+#     echo -e "${COLOR_GREEN}ANACONDA: ${ANACONDA_EXIT_CODE}${COLOR_NONE}"
+# else
+#     echo -e "${COLOR_RED}ANACONDA: ${ANACONDA_EXIT_CODE}${COLOR_NONE}"
+# fi
 
 if [[ ${ALL_EXIT_CODE} -eq 0 ]]
 then
