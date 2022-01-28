@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# will make videos in the current directory smaller and save them as {filename}_resized.mp4 in the current directory
+
+
+for file in *.mp4
+do
+    basename=$(echo ${file} | sed 's/.mp4//')
+    output_file="${basename}_resized.mp4"
+    echo -e "\n\e[01;32mResizing ${file} -> ${output_file}...\e[0m\n"
+    ffmpeg -i "${file}" -vcodec libx265 -crf 28 "${output_file}"
+done 

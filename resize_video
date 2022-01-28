@@ -1,0 +1,12 @@
+#!/bin/bash
+
+while [[ ${#} -gt 0 ]] 
+do
+     basename=$(echo "${1}" | sed -E 's/\.\w*$//g')
+     ext=$(echo "${1}" | sed -E "s/${basename}//g")
+     output_name=$(echo "${basename}_resized${ext}")
+     echo -e "Resizing ${1} to ${output_name}...\n"
+     ffmpeg -i "${1}" -vcodec libx265 -crf 28 "${output_name}"
+     shift
+done
+

@@ -15,6 +15,14 @@
     # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+convert -v &> /dev/null
+ret=${?}
+if [[ ${ret} -ne 0 ]]
+then
+    echo "please install imagemagick"
+    exit 1
+fi
+
 echo -e "\nAll the .jpg files in the current folder will be shrunk to 3600x(auto) if larger."
 echo -n "Are you sure you wish to proceed? (y/n): "
 read ans

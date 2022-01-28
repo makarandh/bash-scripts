@@ -36,7 +36,7 @@ print_usage() {
     echo -e " -a            Runs all of the above, whatever is available"
     echo -e " -h            Prints this help menu and exits"
 
-    echo -e "\nPython 3 packages: pip setuptools wheel youtube-dl numpy matplotlib speedtest-cli virtualenv scipy pipenv" 
+    echo -e "\nPython 3 packages: pip setuptools wheel yt-dlp youtube-dl numpy matplotlib speedtest-cli virtualenv scipy pipenv" 
 }
 
 UPDATE_APT=0
@@ -375,7 +375,7 @@ then
     echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
     echo
-	sudo ${PYTHON3} -m pip install --upgrade pip setuptools wheel youtube-dl speedtest-cli pipenv pyqt5 2> /dev/null 
+	sudo ${PYTHON3} -m pip install --upgrade pip setuptools wheel yt-dlp youtube-dl speedtest-cli pipenv pyqt5 2> /dev/null 
 	PIP_EXIT_CODE=${?}
 fi
 
