@@ -16,7 +16,6 @@
 
 
 echo -e "\n\e[01;31m\bShutdown routine invoked. \e[01;32m\b Press ^c to cancel. \e[0m\n"
-sleep 2
 for(( i=3; i>0; i--)){
     echo -n -e "Shutdown will initiate in \e[01;31m\b ${i} \e[0m\b seconds.\r"
     sleep 1

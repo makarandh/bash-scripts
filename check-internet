@@ -37,7 +37,7 @@ done
 
 if [[ ${ret} -eq 0 ]]
 then
-    echo "Internet is back!!"
+    echo -e "\nYou are connected to the Internet."
 else 
     echo "${ret} Internet is probably back."
 fi

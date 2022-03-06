@@ -9,7 +9,7 @@ print("Python {}".format(sys.version))
 import random
 
 print()
-print("1 - 78:", random.randint(1, 78))
+print("1 - 67:", random.randint(1, 67))
 print()
 
 EOPF

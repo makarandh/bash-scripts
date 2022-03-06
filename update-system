@@ -115,7 +115,7 @@ let UPDATE_COUNT=0
 ######################## APT UPDATE ############################
 ################################################################
 
-apt --version > /dev/null 2>&1 
+which apt > /dev/null 2>&1 
 APT_EXISTS=${?}
 
 EQUAL_LINE=""
