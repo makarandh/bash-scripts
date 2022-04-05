@@ -18,10 +18,8 @@
 echo -e "\n\e[01;31m\bShutdown routine invoked. \e[01;32m\b Press ^c to cancel. \e[0m\n"
 for(( i=3; i>0; i--)){
     echo -n -e "Shutdown will initiate in \e[01;31m\b ${i} \e[0m\b seconds.\r"
-    sleep 1
 }
 echo -e "\e[01;31m\bShutdown process initiated...\e[0m                      "
-sleep 1
 
 echo ""
 echo "Closing IDEs..."
@@ -35,7 +33,6 @@ wmctrl -c json 2>/dev/null &
 wmctrl -c html 2>/dev/null &
 wmctrl -c css 2>/dev/null &
 wmctrl -c xml 2>/dev/null &
-sleep 4
 
 echo "Closing applications..."
 wmctrl -c brave 2>/dev/null &
@@ -46,61 +43,49 @@ wmctrl -c vlc 2>/dev/null &
 wmctrl -c waterfox  2>/dev/null &
 wmctrl -c signal  2>/dev/null &
 wmctrl -c standard  2>/dev/null &
-sleep 2
 
 echo "Killing java..."
 killall java 2>/dev/null
-sleep 2
 
 dc=$( wmctrl -l | grep -i "dolphin" | wc -l )
 while [ ${dc} -gt 0 ] 
 do 
 	echo "Closing dolphin window #${dc}"
 	wmctrl -c dolphin &
-	sleep 1
 	dc=$(( ${dc} - 1 )) 
 done
 
 echo "Closing remaining open windows..."
 wmctrl -l | tr -s " " |  cut -d" " -f 4 | grep -iv "desktop" | grep -iv "plasma" | grep -iv "mak" | grep -iv "root" |  xargs -i wmctrl -c {} &
 killall steam >  /dev/null 2>&1
-sleep 2
 
 echo "Closing qbittorrent..."
 killall -15 qbittorrent 2> /dev/null &
-sleep 2
 
 echo "Closing other terminals..."
 term=$(tty | cut -d/ -f3,4)
 ps -e | grep pts | grep -v ${term} | grep bash | tr -d " " | cut -d p -f 1 | xargs -i kill {}
-sleep 1
 
 echo "Unmounting Veracrypt drives..."
 sudo /usr/bin/veracrypt -d& 2>/dev/null
-sleep 3
 
 echo "Unmounting external drives..."
 sudo /usr/bin/umount /media/ext4TB 2>/dev/null
 sudo /usr/bin/umount /media/portable2 2>/dev/null
 sudo /usr/bin/umount /media/portable1 2>/dev/null
-sleep 1
 
 echo "Stopping wpa_supplicant..."
 sudo /usr/sbin/service wpa_supplicant stop
-sleep 1
 
 echo "Stopping network-manager..."
 sudo /usr/sbin/service network-manager stop 2> /dev/null
 service NetworkManager stop 2> /dev/null
-sleep 1 
 
-echo "Stoping expressvpn..."
-sudo /usr/sbin/service expressvpn stop
-sleep 1
+echo "Stoping Proton vpn..."
+/usr/bin/protonvpn-cli d
 
 echo "Stoping packagekit..."
 sudo /usr/sbin/service packagekit stop
-sleep 1
 
 echo "Shutting down..."
 

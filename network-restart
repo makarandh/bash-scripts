@@ -16,48 +16,52 @@
 
 
 
-if [ "$(hostname)" == "workhorse" ] && [ "${1}" == "-m" ]  
-then  
-	echo ""
-	echo "Renewing mac..."
-	ifconfig enp3s0 down
-	ifconfig wlp4s0 down
-	macchanger -r wlp4s0 
-	macchanger -r enp3s0 
-	ifconfig wlp4s0 up
-	ifconfig enp3s0 up
-	sleep 1 
-fi
-
 echo ""
+echo "Disconnecting ProtonVPN..."
+/usr/bin/protonvpn-cli ks --off
+/usr/bin/protonvpn-cli d
+
 echo "Stopping wpa_supplicant..."
 service wpa_supplicant stop
-sleep 1
 
 echo "Stopping network-manager..."
 service network-manager stop 2> /dev/null
 service NetworkManager stop 2> /dev/null
-sleep 1
-
-echo "Stoping expressvpn..."
-service expressvpn stop
-sleep 1
-
-echo "Starting expressvpn..."
-service expressvpn start
-sleep 1
 
 echo "Starting network-manager..."
 service network-manager start 2> /dev/null
 service NetworkManager start 2> /dev/null
-sleep 1
 
 echo "Starting wpa_supplicant..."
 service wpa_supplicant start
-sleep 1
 echo ""
 
 echo "Restarting systemd-resolved..."
 systemctl restart systemd-resolved.service 
-sleep 1
 echo ""
+
+# if [ "$(hostname)" == "workhorse" ] && [ "${1}" == "-m" ]  
+if [ "${1}" == "-m" ]  
+then  
+	echo ""
+	echo "Renewing mac..."
+	ifconfig enp1s0 down 2> /dev/null 
+	ifconfig enp3s0 down 2> /dev/null 
+	ifconfig wlp4s0 down 2> /dev/null 
+	ifconfig wlp2s0 down 2> /dev/null 
+	macchanger -r wlp4s0  2> /dev/null 
+	macchanger -r wlp2s0  2> /dev/null 
+	macchanger -r enp1s0  2> /dev/null 
+	macchanger -r enp3s0  2> /dev/null 
+	ifconfig wlp4s0 up 2> /dev/null 
+	ifconfig wlp2s0 up 2> /dev/null 
+	ifconfig enp3s0 up 2> /dev/null 
+	ifconfig enp1s0 up 2> /dev/null 
+	sleep 1 
+fi
+
+echo "Disconnecting ProtonVPN..."
+/usr/bin/protonvpn-cli d
+/usr/bin/protonvpn-cli ks --off
+/usr/bin/protonvpn-cli d
+
