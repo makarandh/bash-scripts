@@ -3,10 +3,11 @@
 # will make videos in the current directory smaller and save them as {filename}_resized.mp4 in the current directory
 
 
-for file in *.mp4
+for file in *.[Mm][tTpPkKoO][sS4vV]
 do
-    basename=$(echo ${file} | sed 's/.mp4//')
+    basename=$(echo ${file} | sed -E 's/\.[a-zA-Z0-9]+$//g')
+    extension=$(echo ${file} | sed -E 's/\./ /g' | awk '{print $(NF)}')
     output_file="${basename}_resized.mp4"
-    echo -e "\n\e[01;32mResizing ${file} -> ${output_file}...\e[0m\n"
+    echo -e "\n\e[01;32mResizing ${basename}.${extension} -> ${output_file}...\e[0m\n"
     ffmpeg -i "${file}" -vcodec libx265 -crf 28 "${output_file}"
 done 
