@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export DISPLAY=":0"
+export XAUTHORITY="/home/mak/.Xauthority"
+
 echo ""
 echo "Closing IDEs..."
 wmctrl -c py  2>/dev/null &
@@ -11,7 +14,6 @@ wmctrl -c json  2>/dev/null &
 wmctrl -c html  2>/dev/null &
 wmctrl -c css  2>/dev/null &
 wmctrl -c xml  2>/dev/null &
-sleep 2
 
 echo "Closing applications..."
 wmctrl -c brave 2>/dev/null &
@@ -23,37 +25,35 @@ wmctrl -c waterfox  2>/dev/null &
 wmctrl -c signal  2>/dev/null &
 wmctrl -c standard  2>/dev/null &
 killall slack 2> /dev/null
-sleep 2
+sleep 1
 
 echo "Killing java..."
 killall java 2>/dev/null
-sleep 2
 
 dc=$( wmctrl -l | grep -i "dolphin" | wc -l )
 while [ ${dc} -gt 0 ] 
 do 
 	echo "Closing dolphin window #${dc}"
 	wmctrl -c dolphin &
-	sleep 1
 	dc=$(( ${dc} - 1 )) 
+    sleep 1
 done
+killall caja 2>/dev/null &
+killall dolphin 2>/dev/null &
 
 echo "Closing remaining open windows..."
-wmctrl -l | tr -s " " |  cut -d" " -f 4 | grep -iv "desktop" | grep -iv "plasma" | grep -iv "mak" | grep -iv "root" |  xargs -i wmctrl -c {} &
-sleep 2
+wmctrl -l | tr -s " " |  cut -d" " -f 4 | grep -iv "desktop" | grep -iv "plasma" | grep -iv "mak" | grep -iv "root" | grep -iv "panel" |  xargs -i wmctrl -c {} &
 
 echo "Closing qbittorrent"
 killall -15 qbittorrent 2> /dev/null  &
-sleep 2
 
 echo "Closing other terminals..."
 term=$(tty | cut -d/ -f3,4)
 ps -e | grep pts | grep -v ${term} | grep bash | tr -d " " | cut -d p -f 1 | xargs -i kill -9 {}
-sleep 1
 
 echo "Unmounting Veracrypt drives..."
 sudo veracrypt -d&
-sleep 3
+sleep 1
 
 UP_TO_DATE="Up to date"
 NOT_RUNNING="Dropbox isn't running!"
