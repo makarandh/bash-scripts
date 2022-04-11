@@ -1,10 +1,6 @@
 #!/bin/bash
 
 echo ""
-echo "Running system update"
-/usr/local/sbin/update-system -a
-
-echo ""
 echo "Closing IDEs..."
 wmctrl -c py  2>/dev/null &
 wmctrl -c ion  2>/dev/null &
@@ -85,7 +81,7 @@ else
         if [[ ${NOT_RUNNING} = $(sudo -u mak -i dropbox status) ]]
         then
             echo "Starting Dropbox... "
-            sudo -u mak -i dropbox start > /dev/null 2>&1
+            sudo -u mak -i sh -c 'unset DISPLAY && dropbox start' > /dev/null 2>&1
         else
             echo "Dropbox is syncing. Will try again after a minute.."
         fi
@@ -93,6 +89,10 @@ else
     done
 fi
 
-echo "Dropbox finished syncing. Powering down..."
 
+echo ""
+echo "Running system update"
+/usr/local/sbin/update-system -a
+
+echo "Powering down..."
 /usr/local/sbin/poweroff

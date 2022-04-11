@@ -14,12 +14,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+command_run=$(basename $(echo $0))
+echo "Command that was run: ${command_run}"
 
-echo -e "\n\e[01;31m\bShutdown routine invoked. \e[01;32m\b Press ^c to cancel. \e[0m\n"
-for(( i=3; i>0; i--)){
-    echo -n -e "Shutdown will initiate in \e[01;31m\b ${i} \e[0m\b seconds.\r"
+echo -e "\n\e[01;31m\bWarning: ${command_run} process is being initiated... \e[01;32m\b Press ^c to cancel. \e[0m\n"
+for(( i=2; i>0; i-- )){
+    echo -n -e "Time remaining: \e[01;31m\b ${i} \e[0m\b seconds.\r"
+    sleep 1
 }
-echo -e "\e[01;31m\bShutdown process initiated...\e[0m                      "
+echo -e "\e[01;31m\bUser didn't cancel. Running ${command_run}...\e[0m                      "
 
 echo ""
 echo "Closing IDEs..."
@@ -81,12 +84,19 @@ echo "Stopping network-manager..."
 sudo /usr/sbin/service network-manager stop 2> /dev/null
 service NetworkManager stop 2> /dev/null
 
-echo "Stoping Proton vpn..."
+echo "Stopping Proton vpn..."
 /usr/bin/protonvpn-cli d
 
-echo "Stoping packagekit..."
+echo "Stopping packagekit..."
 sudo /usr/sbin/service packagekit stop
 
-echo "Shutting down..."
+command_run=$(basename $(echo $0))
+if [[ ${command_run} = "reboot" ]]
+then
+    echo "Rebooting..."
+    sudo /usr/sbin/reboot
+else 
+    echo "Shutting down..."
+    sudo /usr/sbin/poweroff
+fi
 
-sudo /usr/sbin/poweroff
