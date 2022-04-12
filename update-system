@@ -115,7 +115,7 @@ let UPDATE_COUNT=0
 ######################## APT UPDATE ############################
 ################################################################
 
-apt --version > /dev/null 2>&1 
+which apt > /dev/null 2>&1 
 APT_EXISTS=${?}
 
 EQUAL_LINE=""
@@ -270,8 +270,9 @@ then
     echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
     echo
-	ubuntu-drivers autoinstall
+	ubuntu-drivers install 2> /dev/null
 	UBUNTU_DRIVERS_EXIT_CODE=${?}
+    prime-select nvidia 2> /dev/null
 fi
 
 
