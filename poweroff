@@ -15,7 +15,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 export DISPLAY=":0"
-export XAUTHORITY="/home/mak/.Xauthority"
+export XAUTHORITY="/home/${username}/.Xauthority"
+username=$(cat /etc/passwd | grep ":1000:" | cut -d: -f 1)
 
 command_run=$(basename $(echo $0))
 echo "Command that was run: ${command_run}"
@@ -64,7 +65,7 @@ killall caja 2>/dev/null &
 killall dolphin 2>/dev/null &
 
 echo "Closing remaining open windows..."
-wmctrl -l | tr -s " " |  cut -d" " -f 4 | grep -iv "desktop" | grep -iv "plasma" | grep -iv "mak" | grep -iv "root" | grep -iv "terminal" | xargs -i wmctrl -c {} &
+wmctrl -l | tr -s " " |  cut -d" " -f 4 | grep -iv "desktop" | grep -iv "plasma" | grep -iv "${username}" | grep -iv "root" | grep -iv "terminal" | xargs -i wmctrl -c {} &
 killall steam >  /dev/null 2>&1
 
 echo "Closing qbittorrent..."

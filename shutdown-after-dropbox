@@ -1,7 +1,8 @@
 #!/bin/bash
 
 export DISPLAY=":0"
-export XAUTHORITY="/home/mak/.Xauthority"
+export XAUTHORITY="/home/${username}/.Xauthority"
+username=$(cat /etc/passwd | grep ":1000:" | cut -d: -f 1)
 
 echo ""
 echo "Closing IDEs..."
@@ -42,7 +43,7 @@ killall caja 2>/dev/null &
 killall dolphin 2>/dev/null &
 
 echo "Closing remaining open windows..."
-wmctrl -l | tr -s " " |  cut -d" " -f 4 | grep -iv "desktop" | grep -iv "plasma" | grep -iv "mak" | grep -iv "root" | grep -iv "terminal" | xargs -i wmctrl -c {} &
+wmctrl -l | tr -s " " |  cut -d" " -f 4 | grep -iv "desktop" | grep -iv "plasma" | grep -iv "${username}" | grep -iv "root" | grep -iv "terminal" | xargs -i wmctrl -c {} &
 
 echo "Closing qbittorrent"
 killall -15 qbittorrent 2> /dev/null  &
@@ -75,13 +76,13 @@ then
 
 else
 
-    while [[ $(sudo -u mak -i dropbox status) != ${UP_TO_DATE} ]]
+    while [[ $(sudo -u ${username} -i dropbox status) != ${UP_TO_DATE} ]]
     do
-        sudo -u mak -i dropbox status
-        if [[ ${NOT_RUNNING} = $(sudo -u mak -i dropbox status) ]]
+        sudo -u ${username} -i dropbox status
+        if [[ ${NOT_RUNNING} = $(sudo -u ${username} -i dropbox status) ]]
         then
             echo "Starting Dropbox... "
-            sudo -u mak -i sh -c 'unset DISPLAY && dropbox start' > /dev/null 2>&1
+            sudo -u ${username} -i sh -c 'unset DISPLAY && dropbox start' > /dev/null 2>&1
         else
             echo "Dropbox is syncing. Will try again after a minute.."
         fi
