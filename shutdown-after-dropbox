@@ -1,8 +1,8 @@
 #!/bin/bash
 
+username=$(cat /etc/passwd | grep ":1000:" | cut -d: -f 1)
 export DISPLAY=":0"
 export XAUTHORITY="/home/${username}/.Xauthority"
-username=$(cat /etc/passwd | grep ":1000:" | cut -d: -f 1)
 
 echo ""
 echo "Closing IDEs..."

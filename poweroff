@@ -14,9 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+username=$(cat /etc/passwd | grep ":1000:" | cut -d: -f 1)
 export DISPLAY=":0"
 export XAUTHORITY="/home/${username}/.Xauthority"
-username=$(cat /etc/passwd | grep ":1000:" | cut -d: -f 1)
 
 command_run=$(basename $(echo $0))
 echo "Command that was run: ${command_run}"
