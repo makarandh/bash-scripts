@@ -167,23 +167,24 @@ do
 
         cd "${DIR_TO_CLEAN}"
         PARENT_DIR=${PWD}
-        while read FILE_TO_CLEAN
+        filelist=($(find . -type f -executable -name "gradlew"))
+        for filename in "${filelist[@]}"
         do
-            if [[ -x ${FILE_TO_CLEAN} ]]
+            if [[ -x ${filename} ]]
             then
-                echo -e "${COLOR_GREEN}\nGradle file found ${FILE_TO_CLEAN}${COLOR_NONE}"
-                PROJ_DIR=$(dirname "${FILE_TO_CLEAN}")
+                echo -e "${COLOR_GREEN}\nGradle file found ${filename}${COLOR_NONE}"
+                PROJ_DIR=$(dirname "${filename}")
                 echo -e "${COLOR_GREEN}Descending into ${PROJ_DIR}${COLOR_NONE}"
                 cd "${PROJ_DIR}"
                 ./gradlew clean
                 cd "${PARENT_DIR}"
                 echo 
             else
-                echo -e "${COLOR_RED}ERROR: Could not clean gradle project: ${FILE_TO_CLEAN}.${COLOR_NONE}"
-                ERROR_FILES[${ERROR_COUNT}]="${FILE_TO_CLEAN}"
+                echo -e "${COLOR_RED}ERROR: Could not clean gradle project: ${filename}.${COLOR_NONE}"
+                ERROR_FILES[${ERROR_COUNT}]="${filename}"
                 let ERROR_COUNT++
             fi
-        done < <(find . -type f -name "*gradlew") 
+        done  
         kill -15 $( ps -ef | grep -i "java" | grep -i "gradle" | tr -s " " | cut -d " " -f 2 ) 2> /dev/null
         echo -e "${COLOR_GREEN}Done${COLOR_NONE}"
         echo -e "${COLOR_WHITE}-------------------------------------------------------${COLOR_NONE}"

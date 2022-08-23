@@ -15,18 +15,26 @@
     # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-echo -e "\nAll the .jpg files in the current folder will be converted to 60% of the original size."
+convert -v &> /dev/null
+ret=${?}
+if [[ ${ret} -ne 0 ]]
+then
+    echo "please install imagemagick"
+    exit 1
+fi
+
+echo -e "\nAll the .jpg files in the current folder will be shrunk to 3600x(auto) if larger."
 echo -n "Are you sure you wish to proceed? (y/n): "
 read ans
 
 if [[ "$ans" =~ (y|Y) ]]
 then
 	echo -e "\nConverting... "
-	for file in *.jpg
+	for file in *.[JjpP][PpnN]*[Gg]
     	do 
 		echo "$file"
 		newfile="new_$file"
-		convert "$file" -resize 60% "$newfile"
+		convert "$file" -resize 3600x3000\> "$newfile"
 		rm -f "$file"
 		mv "$newfile" "$file"
 	done
