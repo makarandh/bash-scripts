@@ -30,7 +30,7 @@ print_help() {
     echo -e " -g           Will clean Gradle projects. Will run gradlew clean."
     echo -e " -n           Will clean node files. Will delete node_modules folders and contents."
     echo -e " -p           Will clean PHP files. Will delete composer vendor folders and contents."
-    echo -e " -d           Will clean Arduino uno built folders cmake-build-debug and cmake-build-uno."
+    echo -e " -m           Will clean Makefile projects and cmake-build-debug and cmake-build-uno."
 
     echo -e "\nAdditional options:"
     echo -e " -f           Will clean user's home directory, if it's in the arguments."
@@ -51,7 +51,7 @@ COLOR_WHITE='\e[01;37m'
 COLOR_NONE='\e[0m'
 
 OPTIONS_COUNT=0
-while getopts ayjgnpfh OPTION
+while getopts aymjgnpfh OPTION
 do
     let OPTIONS_COUNT++
     case ${OPTION} in
@@ -63,11 +63,11 @@ do
             CLEAN_PHP=1
             CLEAN_UNO=1
             ;;
-        "d")
-            CLEAN_UNO=1
-            ;;
         "y")
             CLEAN_PY=1
+            ;;
+        "m")
+            CLEAN_UNO=1
             ;;
         "j")
             CLEAN_JAVA=1
@@ -273,7 +273,7 @@ do
 
     if [[ ${CLEAN_UNO} -eq 1 ]]
     then
-        echo -e "${COLOR_GREEN}\nCleaning Arduino build folders${COLOR_NONE}"
+        echo -e "${COLOR_GREEN}\nCleaning Makfile and cmake files and build folders${COLOR_NONE}"
         echo -e "${COLOR_WHITE}=======================================================${COLOR_NONE}"
 
         cd "${DIR_TO_CLEAN}"
@@ -324,6 +324,19 @@ do
             fi
         done < <(find . -type d -name "cmake-build-debug") 
         
+        cd "${DIR_TO_CLEAN}"
+        PARENT_DIR=${PWD}
+        filelist=($(find . -type f -name "Makefile"))
+        for filename in "${filelist[@]}"
+        do
+            echo -e "${COLOR_GREEN}\nMakefile found ${filename}${COLOR_NONE}"
+            PROJ_DIR=$(dirname "${filename}")
+            echo -e "${COLOR_GREEN}Descending into ${PROJ_DIR}${COLOR_NONE}"
+            cd "${PROJ_DIR}"
+            make clean
+            cd "${PARENT_DIR}"
+            echo 
+        done  
         echo -e "${COLOR_GREEN}Done${COLOR_NONE}"
         echo -e "${COLOR_WHITE}-------------------------------------------------------${COLOR_NONE}"
 
