@@ -196,6 +196,7 @@ do
         echo -e "${COLOR_WHITE}=======================================================${COLOR_NONE}"
 
         cd "${DIR_TO_CLEAN}"
+        find . -type d -wholename "*out/production" -exec rm -rf {} \;
         while read FILE_TO_DEL
         do
             if [[ -f ${FILE_TO_DEL} ]]
