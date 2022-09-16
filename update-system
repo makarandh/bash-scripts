@@ -232,6 +232,7 @@ then
     echo -n "${DASH_LINE}"
     echo -e "\e[0m"
     echo
+    sudo dnf upgrade --refresh
     sudo dnf update -y
     DNF_UPDATE_EXIT_CODE=${?}
 
