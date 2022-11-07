@@ -1,0 +1,259 @@
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+# don't put duplicate lines or lines starting with space in the history.
+HISTCONTROL=ignoreboth
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+export HISTSIZE=8000
+export HISTFILESIZE=8000
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+alias dir='dir --color=auto'
+alias vdir='vdir --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# colored GCC warnings and errors
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+######################################################################################################
+# Aliases, exports, terminal properties
+######################################################################################################
+
+alias grep='grep --color=auto'
+alias ls='ls -F --color=auto'
+alias mv="mv -i"
+alias cp="cp -i"
+alias rm="rm -i"
+alias cd='export PPPRD="$PPRD"; export PPRD="$PRD"; export PRD="$PWD"; cd'
+alias cdp='cd "$PPRD"'
+alias cdpp='cd "$PPPRD"'
+alias who='echo -e "\nYou might wanna try w for more info\n"; who'
+alias ll='ls -lFh'
+alias lla='ls -AlFh'
+alias la='ls -A'
+alias l='ls -CF'
+alias nvidia-temp='nvidia-smi -q -d temperature'
+alias nvidia-usage='nvidia-settings -q GPUUtilization'
+alias whatismyip='curl -m 2 -s ifconfig.io'
+
+alias pg='ping -c 3 www.google.com'
+alias pv='protonvpn-cli'
+alias pvkoff='protonvpn-cli ks --off'
+alias pvkon='protonvpn-cli ks --on'
+alias pvs='protonvpn-cli s 2> /dev/null'
+alias pvd='pvkoff; protonvpn-cli d'
+alias pvc='pvd; pvkon; protonvpn-cli c'
+
+alias c='conda-do-yo-thing && . conda-env-update'
+alias r='randvpn'
+alias ds='dropbox start -i 2> /dev/null'
+alias dt='dropbox stop'
+alias kill-gradle='kill -15 $( ps -ef | grep -i "java" | grep -i "gradle" | tr -s " " | cut -d " " -f 2 )'
+alias he='history | grep -E "[0-9]+\s+e\b"'
+alias ci='check-internet'
+alias es='pvd; pvkoff; pvd; exec startx'
+alias octave='octave --no-init-file'
+
+alias sftp-ecom='sftp -i ~/.ssh/BD-Labs-LightsailDefaultKeyPair-eu-west-2.pem ubuntu@52.56.97.95'
+alias ssh-ecom='ssh -i ~/.ssh/BD-Labs-LightsailDefaultKeyPair-eu-west-2.pem ubuntu@52.56.97.95'
+alias ssh-pi='ssh mak@raspberrypi'
+alias sftp-pi='sftp mak@raspberrypi'
+alias ssh-intellideep='ssh -i ~/.ssh/LightsailDefaultKey-eu-west-2.pem ubuntu@www.intellideep.digital'
+alias sftp-intellideep='sftp -i ~/.ssh/LightsailDefaultKey-eu-west-2.pem ubuntu@www.intellideep.digital'
+
+alias scram='java -jar ~/Dropbox/TNoodle-WCA-1.1.2.jar & sleep 3; firefox-dev localhost:2014; kill %1; sleep 1; echo;'
+
+if [[ $(hostname) == "workhorse" ]]
+then
+	alias smbwin='smbclient \\192.168.122.20\share'
+    alias ssh-kali='ssh john@kali'
+    alias sftp-kali='sftp john@kali'
+    alias ssh-fedora='ssh john@fedora'
+    alias sftp-fedora='sftp john@fedora'
+    alias ssh-ubuntu='ssh john@ubuntu'
+    alias sftp-ubuntu='sftp john@ubuntu'
+    alias mongo-mak='mongo --tls --tlsCAFile /etc/ssl/mongodb.pem --host localhost -u mak -p'
+    alias aws-view-buckets='aws s3api list-buckets'
+    alias aws-view-intellideep-s3='aws s3api list-objects --bucket geo-backup-intellideep.digital  --query "Contents[].{Key: Key, Size: Size}"'
+    alias qb='fbc -lang qb'
+    aws-cp-intellideep-s3() {
+        aws s3 cp s3://geo-backup-intellideep.digital/${1} .
+    }
+    aws-sync-intellideep-s3() {
+        if [[ -z ${1} ]]
+        then 
+            aws s3 sync s3://geo-backup-intellideep.digital .
+        else
+            aws s3 sync ${1} s3://geo-backup-intellideep.digital ${2}
+        fi
+
+    }
+    aws-sync-intellideep-s3-and-delete() {
+        echo "Fetching data..."
+        
+        files_in_bucket=$(aws s3 ls geo-backup-intellideep.digital | wc -l)
+        files_in_dir=$(ls -l | grep -v "total" | wc -l)
+        files_to_delete=$(( ${files_in_bucket} - ${files_in_dir} ))
+
+        echo -e "\nNumber of files in bucket: ${files_in_bucket}"
+        echo "Number of files in ${PWD}: ${files_in_dir}"
+
+
+        echo -e -n "\n${files_to_delete} files will be deleted from bucket. Are you sure (y/n) ? "
+        read aws_ans
+        if [[ ${aws_ans} == "y" ]] 
+        then 
+            echo "Syncing with delete..."
+            aws s3 sync . s3://geo-backup-intellideep.digital --delete
+        else 
+            echo "User canceled."
+        fi
+    }
+fi
+
+stty -ixon
+set -C
+set -b
+
+export PATH="/home/mak/apps/anaconda3/bin:$PATH:/home/mak/code/Bash/bin:/usr/local/share/webOS_TV_SDK/CLI/bin"
+export PATH=$PATH:~/apps/android-studio/bin/
+export PATH=$PATH:~/apps/robo3t-1.3.1-linux-x86_64-7419c406/bin/
+export PATH=$PATH:~/.platformio/penv/bin/
+export PATH="/home/mak/bin:$PATH"
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export PATH=$PATH:$JAVA_HOME/bin
+export PATH=$PATH:~/apps/tizen-studio/tools/ide/bin/
+export PATH=$PATH:/opt/ghc/bin/
+
+export VISUAL="vim"
+export SUDO_EDITOR="vim"
+export EDITOR="vim"
+export PROMPT_COMMAND='history -a'
+# export PS1='\[\e[01;34m\]\u\[\e[01;00m\]|\[\e[01;32m\]\h\[\e[01;00m\]|\[\e[01;34m\]\W\[\e[01;00m\]\$ ' 
+export PS1="\[\e[01;32m\]\A\[\e[01;37m\]|\[\e[01;34m\]\u\[\e[01;00m\]|\[\e[01;32m\]\h\[\e[01;00m\]|\[\e[01;34m\]\W\[\e[01;00m\]\$ "
+
+download_4k() { 
+    (yt-dlp -f 315 ${1} -o vid.webm && yt-dlp -f 251 ${1} -o audio.webm && ffmpeg -i vid.webm -i audio.webm -c copy output.mkv && rm -f vid.webm audio.webm ) || wall failed 
+    }
+
+######################################################################################################
+# AWS
+######################################################################################################
+export AWS_CLI_AUTO_PROMPT="on-partial"
+complete -C '/usr/local/bin/aws_completer' aws
+
+######################################################################################################
+# >>> conda initialize >>>
+######################################################################################################
+
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/mak/apps/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/mak/apps/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/mak/apps/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/mak/apps/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+conda deactivate
+
+######################################################################################################
+# Print info to terminal
+######################################################################################################
+
+EQUAL_LINE=""
+DASH_LINE=""
+for((i=0; i<$(tput cols); i++)) {
+    EQUAL_LINE+="="
+    DASH_LINE+="-"
+}
+
+print_line() {
+    echo -en "\e[01;37m"
+    if [[ ${1} == "=" ]]
+    then
+        echo -n "${EQUAL_LINE}"
+    else
+        echo -n "${DASH_LINE}"
+    fi
+    echo -e "\e[0m"
+}
+
+print_line "="
+
+echo -e "\e[01;33m\bOpen ports: \e[0m"
+print_line "-"
+ss -ntlup
+print_line "-"
+
+#################
+## Run pulseeffects in the background if not running already 
+##################
+if [[ $(hostname) == "workhorse" ]]
+then
+    pulseeffects --help > /dev/null 2>&1
+    pe_exit_code=$?
+    if [[ ${pe_exit_code} -eq 0 ]]
+    then 
+        pe_running=`ps -ef | grep "pulseeffects --gapplication-service" | grep -v grep | wc -l`
+        if [[ ${pe_running} -ge 1 ]] 
+        then 
+            echo -e "\nPulseEffect running. Press Meta+Ctrl+P to adjust equalizer.\n" 
+        else  
+            echo -e "\nStarting PulseEffects." 
+            nohup pulseeffects --gapplication-service > /dev/null 2>&1 &
+            echo -e "Press Meta+Ctrl+P to adjust equalizer.\n" 
+        fi
+        unset pe_running
+    fi
+    unset pe_exit_code
+fi
+
+echo -en "\e[0m"
+
+protonvpn-cli s 2> /dev/null
+
+echo -en "\e[0m"
+print_line "="
+
+# Enable programmable sdb completion features.
+if [ -f ~/.sdb/.sdb-completion.bash ]; then
+ source ~/.sdb/.sdb-completion.bash
+fi
+
+[ -f "/home/mak/.ghcup/env" ] && source "/home/mak/.ghcup/env" # ghcup-env
+

@@ -40,26 +40,26 @@ echo "Restarting systemd-resolved..."
 systemctl restart systemd-resolved.service 
 echo ""
 
-# if [ "$(hostname)" == "workhorse" ] && [ "${1}" == "-m" ]  
-if [ "${1}" == "-m" ]  
-then  
-	echo ""
-	echo "Renewing mac..."
-	ifconfig enp1s0 down 2> /dev/null 
-	ifconfig enp3s0 down 2> /dev/null 
-	ifconfig wlp4s0 down 2> /dev/null 
-	ifconfig wlp2s0 down 2> /dev/null 
-	macchanger -r wlp4s0  2> /dev/null 
-	macchanger -r wlp2s0  2> /dev/null 
-	macchanger -r enp1s0  2> /dev/null 
-	macchanger -r enp3s0  2> /dev/null 
-	ifconfig wlp4s0 up 2> /dev/null 
-	ifconfig wlp2s0 up 2> /dev/null 
-	ifconfig enp3s0 up 2> /dev/null 
-	ifconfig enp1s0 up 2> /dev/null 
-	sleep 1 
-fi
-
+## if [ "$(hostname)" == "workhorse" ] && [ "${1}" == "-m" ]  
+#if [ "${1}" == "-m" ]  
+#then  
+#	echo ""
+#	echo "Renewing mac..."
+#	ifconfig enp1s0 down 2> /dev/null 
+#	ifconfig enp3s0 down 2> /dev/null 
+#	ifconfig wlp4s0 down 2> /dev/null 
+#	ifconfig wlp2s0 down 2> /dev/null 
+#	macchanger -r wlp4s0  2> /dev/null 
+#	macchanger -r wlp2s0  2> /dev/null 
+#	macchanger -r enp1s0  2> /dev/null 
+#	macchanger -r enp3s0  2> /dev/null 
+#	ifconfig wlp4s0 up 2> /dev/null 
+#	ifconfig wlp2s0 up 2> /dev/null 
+#	ifconfig enp3s0 up 2> /dev/null 
+#	ifconfig enp1s0 up 2> /dev/null 
+#	sleep 1 
+#fi
+#
 echo "Disconnecting ProtonVPN..."
 /usr/bin/protonvpn-cli d
 /usr/bin/protonvpn-cli ks --off

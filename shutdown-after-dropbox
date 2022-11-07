@@ -54,7 +54,7 @@ ps -e | grep pts | grep -v ${term} | grep bash | tr -d " " | cut -d p -f 1 | xar
 
 echo "Unmounting Veracrypt drives..."
 sudo veracrypt -d&
-sleep 1
+sleep 4
 
 UP_TO_DATE="Up to date"
 NOT_RUNNING="Dropbox isn't running!"

@@ -1,0 +1,58 @@
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Settings copied from /etc/vim/vimrc
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+syntax on
+set bg=dark     "set color of text assuming background is dark
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+set showmatch		" Show matching brackets.
+set ignorecase		" Do case insensitive matching
+set smartcase		" When there is uppercase letter in search, do not ignore case
+set incsearch		" Incremental search
+
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Settings copied from /usr/share/vim/vim81/defaults.vim
+" and /usr/share/vim/vim81/debian.vim
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set ruler		" show the cursor position all the time
+set nocompatible	" Use Vim defaults instead of 100% vi compatibility
+set backspace=indent,eol,start	" more powerful backspacing
+
+" modelines have historically been a source of security/resource
+" vulnerabilities -- disable by default, even when 'nocompatible' is set
+set nomodeline
+
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" My own settings 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Disable mouse because I don't like it
+set mouse=		" Enable mouse usage (all modes)
+set ttymouse=
+
+" tabs are spaces, indentation and tab = 4 spaces
+set shiftwidth=4
+set tabstop=4
+" set expandtab
+set smarttab
+
+set ai              "sets auto indent
+set si              "sets smart indent 
+set history=1000
+set wildmenu        " show commands on tab completion
+set scrolloff=5     " Has this many line when you press z and enter  
+
+" set hls           " sets hlsearch (highlights searches)
+set nu              " Show numberline
+set lbr             "sets line to not break mid word
+
+" set backup        " sets backup of files you edit on vim
+set hidden          " when opening multiple files, all files are loaded in buffer 
+set showcmd		" Show (partial) command in status line.
+
+au BufRead,BufNewFile *.nginx set ft=nginx
+au BufRead,BufNewFile */etc/nginx/* set ft=nginx
+au BufRead,BufNewFile */usr/local/nginx/conf/* set ft=nginx
+au BufRead,BufNewFile nginx.conf set ft=nginx
