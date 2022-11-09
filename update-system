@@ -283,21 +283,26 @@ fi
 
 snap --version > /dev/null 2>&1
 SNAP_EXISTS=${?}
-
+RUNNING_WSL=$(cat /proc/version | grep -i microsoft | grep -i wsl | wc -l)
 if [[ ${SNAP_EXISTS} -eq 0 && ${UPDATE_SNAP} -eq 1 ]]
 then
-    let UPDATE_COUNT++
-    echo
-    echo -en "\e[01;37m"
-    echo -n "${EQUAL_LINE}"
-    echo -e "\e[0m"
-	echo -e "\e[01;32m \bUpdating Snap Packages"
-    echo -en "\e[01;37m"
-    echo -n "${EQUAL_LINE}"
-    echo -e "\e[0m"
-    echo
-	sudo snap refresh 
-	SNAP_EXIT_CODE=${?}
+ 	if [[ ${RUNNING_WSL} -eq 1 ]] 
+	then 
+		echo "Running WSL. Skipping snap update." 
+	else
+		let UPDATE_COUNT++
+		echo
+		echo -en "\e[01;37m"
+		echo -n "${EQUAL_LINE}"
+		echo -e "\e[0m"
+		echo -e "\e[01;32m \bUpdating Snap Packages"
+		echo -en "\e[01;37m"
+		echo -n "${EQUAL_LINE}"
+		echo -e "\e[0m"
+		echo
+		sudo snap refresh 
+		SNAP_EXIT_CODE=${?}
+	fi
 fi
 
 
@@ -450,7 +455,7 @@ else
     UBUNTU_DRIVERS_EXIT_CODE=0
 fi
 
-if [[ ${SNAP_EXISTS} -eq 0 && ${UPDATE_SNAP} -eq 1 ]]
+if [[ ${SNAP_EXISTS} -eq 0 && ${UPDATE_SNAP} -eq 1 && ${RUNNING_WSL} -ne 1 ]]
 then
     if [[ ${SNAP_EXIT_CODE} -eq 0 ]] 
     then
