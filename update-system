@@ -183,6 +183,14 @@ then
     sudo apt full-upgrade -y --allow-downgrades 
     UPGRADE_EXIT_CODE=${?}
 
+    echo -e "\e[01;32m\nTrying to update yt-dlp..."
+    echo -en "\e[01;37m"
+    echo -n "${DASH_LINE}"
+    echo -e "\e[0m"
+    echo
+	sudo yt-dlp -U 2> /dev/null
+    YTDLP_EXIT_CODE=${?}
+
     echo -e "\e[01;32m\nRunning apt install -f..."
     echo -en "\e[01;37m"
     echo -n "${DASH_LINE}"
@@ -382,8 +390,14 @@ then
     echo -n "${EQUAL_LINE}"
     echo -e "\e[0m"
     echo
+	# sudo ${PYTHON3} -m pip install --upgrade pip setuptools wheel yt-dlp youtube-dl speedtest-cli pipenv pyqt5  
 	sudo ${PYTHON3} -m pip install --upgrade pip setuptools wheel yt-dlp youtube-dl speedtest-cli pipenv pyqt5 2> /dev/null 
 	PIP_EXIT_CODE=${?}
+else
+	if [[ ${PYTHON_EXISTS} -eq 0 ]]
+	then
+		echo "Python3 not found. Skipping..."
+	fi
 fi
 
 
