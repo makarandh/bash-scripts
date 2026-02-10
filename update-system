@@ -30,21 +30,21 @@ print_usage() {
     echo -e " -t            Updates apt pacakges"
     echo -e " -s            Updates snap packages"
     echo -e " -f            Updates flatpak packages"
-    echo -e " -n            Updates npm global"
-    echo -e " -p            Installs/Updates python3 packages mentioned below"
+#    echo -e " -n            Updates npm global"
+#    echo -e " -p            Installs/Updates python3 packages mentioned below"
     echo -e " -g            Updates Ubuntu drivers (Nvidia)"
     echo -e " -a            Runs all of the above, whatever is available"
     echo -e " -h            Prints this help menu and exits"
 
-    echo -e "\nPython 3 packages: pip setuptools wheel yt-dlp youtube-dl numpy matplotlib speedtest-cli virtualenv scipy pipenv" 
+#    echo -e "\nPython 3 packages: pip setuptools wheel yt-dlp youtube-dl numpy matplotlib speedtest-cli virtualenv scipy pipenv" 
 }
 
 UPDATE_APT=0
 UPDATE_DNF=0
 UPDATE_SNAP=0
 UPDATE_FLAT=0
-UPDATE_NPM=0
-UPDATE_PY=0
+#UPDATE_NPM=0
+# UPDATE_PY=0
 UPDATE_DRIV=0
 
 if [[ ${#} -eq 0 ]]
@@ -62,8 +62,8 @@ do
             UPDATE_DNF=1
             UPDATE_SNAP=1
             UPDATE_FLAT=1
-            UPDATE_NPM=1
-            UPDATE_PY=1
+ #           UPDATE_NPM=1
+ #           UPDATE_PY=1
             UPDATE_DRIV=1
             ;;
         
@@ -82,12 +82,12 @@ do
         "g")
             UPDATE_DRIV=1
             ;;
-        "n")
-            UPDATE_NPM=1
-            ;;
-        "p")
-            UPDATE_PY=1
-            ;;
+#         "n")
+#             UPDATE_NPM=1
+#             ;;
+#         "p")
+#             UPDATE_PY=1
+#             ;;
         "h")
             print_usage ${0}
             exit 0
@@ -182,14 +182,6 @@ then
     echo
     sudo apt full-upgrade -y --allow-downgrades 
     UPGRADE_EXIT_CODE=${?}
-
-    echo -e "\e[01;32m\nTrying to update yt-dlp..."
-    echo -en "\e[01;37m"
-    echo -n "${DASH_LINE}"
-    echo -e "\e[0m"
-    echo
-	sudo yt-dlp -U 2> /dev/null
-    YTDLP_EXIT_CODE=${?}
 
     echo -e "\e[01;32m\nRunning apt install -f..."
     echo -en "\e[01;37m"
@@ -341,65 +333,65 @@ fi
 ################################################################
 ######################### NPM UPDATE ###########################
 ################################################################
-
-npm --version > /dev/null 2>&1
-NPM_EXISTS=${?}
-
-if [[ ${NPM_EXISTS} -eq 0 && ${UPDATE_NPM} -eq 1 ]]
-then
-    let UPDATE_COUNT++
-    echo
-    echo -en "\e[01;37m"
-    echo -n "${EQUAL_LINE}"
-    echo -e "\e[0m"
-	echo -e "\e[01;32m \bUpdating NPM Global Packages"
-    echo -en "\e[01;37m"
-    echo -n "${EQUAL_LINE}"
-    echo -e "\e[0m"
-    echo
-    
-    which ncu &> /dev/null
-    if [[ ${?} -ne 0 ]]
-    then
-        sudo npm i -g npm-check-updates
-    fi
-
-	ncu -g
-	sudo npm update -g
-	NPM_EXIT_CODE=${?}
-fi
-
+# 
+# npm --version > /dev/null 2>&1
+# NPM_EXISTS=${?}
+# 
+# if [[ ${NPM_EXISTS} -eq 0 && ${UPDATE_NPM} -eq 1 ]]
+# then
+#     let UPDATE_COUNT++
+#     echo
+#     echo -en "\e[01;37m"
+#     echo -n "${EQUAL_LINE}"
+#     echo -e "\e[0m"
+# 	echo -e "\e[01;32m \bUpdating NPM Global Packages"
+#     echo -en "\e[01;37m"
+#     echo -n "${EQUAL_LINE}"
+#     echo -e "\e[0m"
+#     echo
+#     
+#     which ncu &> /dev/null
+#     if [[ ${?} -ne 0 ]]
+#     then
+#         sudo npm i -g npm-check-updates
+#     fi
+# 
+# 	ncu -g
+# 	sudo npm update -g
+# 	NPM_EXIT_CODE=${?}
+# fi
+# 
 
 ################################################################
 ######################### PYTHON UPDATE ########################
 ################################################################
-
-PYTHON3="/usr/bin/python3" 
-${PYTHON3} --version > /dev/null 2>&1
-PYTHON_EXISTS=${?}
-
-if [[ ${PYTHON_EXISTS} -eq 0 && ${UPDATE_PY} -eq 1 ]]
-then
-    let UPDATE_COUNT++
-    echo
-    echo -en "\e[01;37m"
-    echo -n "${EQUAL_LINE}"
-    echo -e "\e[0m"
-	echo -e "\e[01;32m \bUpdating Python Packages"
-    echo -en "\e[01;37m"
-    echo -n "${EQUAL_LINE}"
-    echo -e "\e[0m"
-    echo
-	# sudo ${PYTHON3} -m pip install --upgrade pip setuptools wheel yt-dlp youtube-dl speedtest-cli pipenv pyqt5  
-	sudo ${PYTHON3} -m pip install --upgrade pip setuptools wheel yt-dlp youtube-dl speedtest-cli pipenv pyqt5 2> /dev/null 
-	PIP_EXIT_CODE=${?}
-else
-	if [[ ${PYTHON_EXISTS} -eq 0 ]]
-	then
-		echo "Python3 not found. Skipping..."
-	fi
-fi
-
+# 
+# PYTHON3="/usr/bin/python3" 
+# ${PYTHON3} --version > /dev/null 2>&1
+# PYTHON_EXISTS=${?}
+# 
+# if [[ ${PYTHON_EXISTS} -eq 0 && ${UPDATE_PY} -eq 1 ]]
+# then
+#     let UPDATE_COUNT++
+#     echo
+#     echo -en "\e[01;37m"
+#     echo -n "${EQUAL_LINE}"
+#     echo -e "\e[0m"
+# 	echo -e "\e[01;32m \bUpdating Python Packages"
+#     echo -en "\e[01;37m"
+#     echo -n "${EQUAL_LINE}"
+#     echo -e "\e[0m"
+#     echo
+# 	# sudo ${PYTHON3} -m pip install --upgrade pip setuptools wheel yt-dlp youtube-dl speedtest-cli pipenv pyqt5  
+# 	sudo ${PYTHON3} -m pip install --upgrade pip setuptools wheel yt-dlp youtube-dl speedtest-cli pipenv pyqt5 2> /dev/null 
+# 	PIP_EXIT_CODE=${?}
+# else
+# 	if [[ ${PYTHON_EXISTS} -eq 0 ]]
+# 	then
+# 		echo "Python3 not found. Skipping..."
+# 	fi
+# fi
+# 
 
 ################################################################
 ######################## STATUS MESSAGE ########################
@@ -495,35 +487,35 @@ else
     FLATPAK_EXIT_CODE=0
 fi
 
-if [[ ${NPM_EXISTS} -eq 0 && ${UPDATE_NPM} -eq 1 ]]
-then
-    if [[ ${NPM_EXIT_CODE} -eq 0 ]] 
-    then
-        TEXT_COLOR='\e[01;32m\b'
-    else
-        TEXT_COLOR='\e[01;31m\b'
-    fi
-	echo -e "${TEXT_COLOR}NODE GLOBAL: ${NPM_EXIT_CODE}\e[0m"
-else
-    NPM_EXIT_CODE=0
-fi
-
-if [[ ${PYTHON_EXISTS} -eq 0 && ${UPDATE_PY} -eq 1 ]]
-then
-    if [[ ${PIP_EXIT_CODE} -eq 0 ]] 
-    then
-        TEXT_COLOR='\e[01;32m\b'
-    else
-        TEXT_COLOR='\e[01;31m\b'
-    fi
-	echo -e "${TEXT_COLOR}PYTHON 3   : ${PIP_EXIT_CODE}\e[0m"
-else
-    PIP_EXIT_CODE=0
-fi
+# if [[ ${NPM_EXISTS} -eq 0 && ${UPDATE_NPM} -eq 1 ]]
+# then
+#     if [[ ${NPM_EXIT_CODE} -eq 0 ]] 
+#     then
+#         TEXT_COLOR='\e[01;32m\b'
+#     else
+#         TEXT_COLOR='\e[01;31m\b'
+#     fi
+# 	echo -e "${TEXT_COLOR}NODE GLOBAL: ${NPM_EXIT_CODE}\e[0m"
+# else
+#     NPM_EXIT_CODE=0
+# fi
+# 
+# if [[ ${PYTHON_EXISTS} -eq 0 && ${UPDATE_PY} -eq 1 ]]
+# then
+#     if [[ ${PIP_EXIT_CODE} -eq 0 ]] 
+#     then
+#         TEXT_COLOR='\e[01;32m\b'
+#     else
+#         TEXT_COLOR='\e[01;31m\b'
+#     fi
+# 	echo -e "${TEXT_COLOR}PYTHON 3   : ${PIP_EXIT_CODE}\e[0m"
+# else
+#     PIP_EXIT_CODE=0
+# fi
 
 echo -e "\nTotal components for which update was run: \e[01;32m${UPDATE_COUNT}"
     echo -en "\e[01;37m"
     echo -n "${DASH_LINE}"
     echo -e "\e[0m"
 
-exit ${UPDATE_EXIT_CODE} || ${UPGRADE_EXIT_CODE} || ${DNF_UPDATE_EXIT_CODE} || ${UBUNTU_DRIVERS_EXIT_CODE} || ${SNAP_EXIT_CODE} || ${FLATPAK_EXIT_CODE} || ${NPM_EXIT_CODE} || ${PIP_EXIT_CODE}
+exit ${UPDATE_EXIT_CODE} || ${UPGRADE_EXIT_CODE} || ${DNF_UPDATE_EXIT_CODE} || ${UBUNTU_DRIVERS_EXIT_CODE} || ${SNAP_EXIT_CODE} || ${FLATPAK_EXIT_CODE} 

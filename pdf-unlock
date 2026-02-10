@@ -1,0 +1,39 @@
+#!/bin/bash
+
+pdftk > /dev/null 2>&1
+RETURN_VALUE=$?
+if [[ ${RETURN_VALUE} == 127 ]]
+	then
+	echo "Error: pdftk not found. Please install pdftk and try again."
+	exit 1
+fi
+
+if [[ "${1}" == "" || "${1}" == -* ]] 
+	then
+	echo "Usage: $(basename ${0}) <pdf-file>"
+	exit 0
+fi
+
+FILENAME=${1}
+
+shopt -s nocasematch
+if [ ! -f "${FILENAME}" ] || [[ ! "${FILENAME}" == *.pdf ]]; then
+  echo "Error: pdf file not found: ${FILENAME}"
+  exit 1
+fi
+shopt -u nocasematch
+
+
+FILE_BASENAME=$(echo "${FILENAME}" | sed s/.pdf$//)
+OUTPUT_FILENAME=${FILE_BASENAME}-unlocked.pdf
+
+echo "Unlocking ${FILENAME}..."
+pdftk ${FILENAME} input_pw PROMPT output ${OUTPUT_FILENAME}
+RETURN_VALUE=$?
+if [[ ${RETURN_VALUE} == 0 ]]
+	then
+	echo "Unlocked file: ${OUTPUT_FILENAME}"
+fi 
+
+exit ${RETURN_VALUE}
+

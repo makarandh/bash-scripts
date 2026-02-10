@@ -1,0 +1,53 @@
+#!/bin/bash
+
+ffmpeg > /dev/null 2>&1
+RETURN_VALUE=$?
+if [[ ${RETURN_VALUE} == 127 ]]
+	then
+	echo "Error: ffmpeg not found. Please install ffmpeg and try again."
+	exit 1
+fi
+
+if [[ "${1}" == "" || "${1}" == "-h"  || "${1}" == "--help" ]] 
+	then
+	echo "Usage: $(basename ${0}) <video-file>"
+	exit 0
+fi
+
+FILENAME="${*}"
+
+shopt -s nocasematch
+if [ ! -f "${FILENAME}" ] ; then
+  echo "Error: file not found: ${FILENAME}"
+  exit 1
+fi
+shopt -u nocasematch
+
+FILE_EXTENSION="${FILENAME##*.}"
+FILE_BASENAME="${FILENAME%.*}"
+OUTPUT_FILENAME=${FILE_BASENAME}-rotated.${FILE_EXTENSION}
+SCRIPT_NAME=$(basename "${0}")
+
+if [[ ${SCRIPT_NAME} == "rotate-90" ]] ; then
+	echo "Rotating 90 degrees ${FILENAME}..."
+	ffmpeg -i "${FILENAME}" -vf "transpose=1" -c:a copy "${OUTPUT_FILENAME}"
+	RETURN_VALUE=$?
+elif [[ ${SCRIPT_NAME} == "rotate-270" ]] ; then
+	echo "Rotating 270 degrees ${FILENAME}..."
+	ffmpeg -i "${FILENAME}" -vf "transpose=2" -c:a copy "${OUTPUT_FILENAME}"
+	RETURN_VALUE=$?
+elif [[ ${SCRIPT_NAME} == "rotate-180" ]] ; then
+	echo "Rotating 270 degrees ${FILENAME}..."
+	ffmpeg -i "${FILENAME}" -vf "transpose=1,transpose=1" -c:a copy "${OUTPUT_FILENAME}"
+	RETURN_VALUE=$?
+else
+	echo "Can't determine how many degrees to rotate. Exiting."
+	exit 1
+fi
+
+if [[ ${RETURN_VALUE} == 0 ]] ; then
+	echo "Rotated file: ${OUTPUT_FILENAME}"
+fi 
+
+exit ${RETURN_VALUE}
+
